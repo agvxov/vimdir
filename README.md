@@ -14,6 +14,8 @@
 [X] dryrun
 [X] use ${VIMDIREDITOR}
 
+## SYNOPSIS
+       vidir [options] [directory]
 
 ## OPTIONS
 **-h**
