@@ -15,12 +15,6 @@ bool do_permissions = false;
 bool do_owner       = false;
 
 #define DEBUG
-#define CHECK(x) do { \
-        if (x) { \
-            r = x; \
-            goto end; \
-        } \
-    } while (0)
 
 int edit(const char * filename) {
     size_t cmd_len = strlen(editor) + sizeof(' ') + strlen(filename) + 1;
@@ -47,6 +41,11 @@ void clean_up(void) {
 }
 
 signed main(int argc, char * * argv) {
+    #define CHECK(x) do { \
+            if ((r = x)) { \
+                goto end; \
+            } \
+        } while (0)
     int r = 0;
 
     get_env();
@@ -87,6 +86,7 @@ signed main(int argc, char * * argv) {
         fclose(tmpfile);
     }
     clean_up();
+    #undef CHECK
 
     return r;
 }
