@@ -1,0 +1,21 @@
+#ifndef ERROR_H
+#define ERROR_H
+
+enum {
+    E_OPEN_EDITOR,
+    E_FILE_ACCESS,
+    E_FILE_DELETE,
+    E_FILE_MOVE,
+    E_FORMAT,
+};
+
+extern void errorn(int i, ...);
+extern void warning(const char * fmt, ...);
+
+#define CHECK_OPEN(f, n, E) \
+    if (!f) { \
+        errorn(E_FILE_ACCESS, f); \
+        E; \
+    }
+
+#endif
