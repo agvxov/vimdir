@@ -204,7 +204,7 @@ class CMDTEST_myswapdir < Cmdtest::Testcase
     import_directory "test/myswapdir/", "./myswapdir/"
   end
 
-  def test_trailing_slash_included
+  def test_swap
     File.write('target.txt',
       [
         "000\t./myswapdir/file2.txt",
