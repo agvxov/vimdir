@@ -5,17 +5,27 @@
 #include <string.h>
 #include <getopt.h>
 #include "global.h"
+#include "dictate.h"
 
 void usage() {
-    puts("vimdir <path>");
-    puts("  -h : print help");
-    puts("  -n : dry run; do not modify files, just print operations");
-    puts("  -p : allow for editing permissions");
-    puts("  -o : allow for editing owner/group");
-    puts("  -r : recursive");
+    dictate(
+        "$B$gvimdir$0 $y[$boptions$y] <$bpath$y>$0\n"
+        "  $B$g-h$0 : print help\n"
+        "  $B$g-n$0 : dry run; do not modify files, just print operations\n"
+        "  $B$g-p$0 : allow for editing permissions\n"
+        "  $B$g-o$0 : allow for editing owner/group\n"
+        "  $B$g-r$0 : recursive"
+    );
 }
 
 void get_env(void) {
+  no_color:
+    char * no_color = getenv("NO_COLOR");
+    if (no_color
+    &&  no_color[0] != '\0') {
+        dictate_color_enabled(false);
+    }
+    
   set_editor:
     editor = getenv("VIMDIREDITOR");
     if (editor) { goto set_custom_rm; }

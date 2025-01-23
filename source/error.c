@@ -6,18 +6,18 @@
 
 static
 void verror(const char * fmt, va_list argv) {
-    fdictatef(stderr, "vimdir: error: ");
+    fdictatef(stderr, "$rvimdir: error: ");
     vafdictatef(stderr, fmt, argv);
-    fdictate(stderr, "");
+    fdictate(stderr, "$0");
 }
 
 void warning(const char * fmt, ...) {
     va_list argv;
     va_start(argv, fmt);
 
-    fdictatef(stderr, "vimdir: warning: ");
+    fdictatef(stderr, "$yvimdir: warning: ");
     vafdictatef(stderr, fmt, argv);
-    fdictate(stderr, "");
+    fdictate(stderr, "$0");
 
     va_end(argv);
 }

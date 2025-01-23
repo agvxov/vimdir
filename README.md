@@ -14,6 +14,7 @@
 [X] recursion
 [X] dryrun
 [X] use ${VIMDIREDITOR}
+[X] NO_COLOR / color
 
 ## SYNOPSIS
 **vidir** **[***options***]** **[**directory**]**
@@ -92,6 +93,11 @@ Editor to use.
 **VIMDIRRM**
 `rm` alternative to use.
 Set this to an appropriate executable to have move-to-trash behaviour on delete.
+
+**NO_COLOR**
+According to the no-color convention,
+if this variable is set and is not empty,
+no colors will be printed.
 
 ## NOTES
 The default editor is *Vi*.
