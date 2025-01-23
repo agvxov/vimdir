@@ -1,0 +1,5 @@
+.gdb_history
+.cmdtest-filter
+tmp-cmdtest-*/
+vimdir_test_file.vimdir
+vimdir
