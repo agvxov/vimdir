@@ -40,6 +40,8 @@ int init_file_utils(bool is_dry_run) {
         //mychown  = moist_chown;
         //mymove   = moist_move;
     }
+
+    return 0;
 }
 
 int deinit_file_utis() {
@@ -48,6 +50,8 @@ int deinit_file_utis() {
     mychmod  = NULL;
     mychown  = NULL;
     mymove   = NULL;
+
+    return 0;
 }
 
 char mode_type_to_char(mode_t m) {

@@ -69,6 +69,7 @@ int add_directory(const char * const folder) {
     }
 
     closedir(dir);
+    return 0;
 }
 
 int init_directive_c(const char * folder) {
@@ -99,6 +100,8 @@ int deinit_directive_c(void) {
     kv_destroy(directory_queue);
     kv_destroy(entries);
     deinit_file_utis();
+
+    return 0;
 }
 
 int make_directive_file(FILE * f) {
@@ -218,4 +221,6 @@ int execute_directive_file(FILE * f) {
             mymove(entry->name, buffer);
         }
     }
+
+    return 0;
 }
