@@ -21,21 +21,30 @@ proc to_clean_name {string} {
 
 proc rewrite_regex {string} {
     set r $string
-    set r [string map {"*" ".\*"} $r]
+    set r [string map {"*" "\[^/\\t\]*"} $r]
+    set r [string map {"~" "\\~"} $r]
+    return $r
+}
+
+proc rewrite_color {string} {
+    set r $string
+    set r [string map {"38;5;" ""} $r]
     return $r
 }
 
 proc match_rule {rule} {
-    set template "syn match vd%s \"%s\""
+    set template "syn match vd%s \"%s$\""
     set name [to_clean_name [lindex $rule 0]]
     set pattern [rewrite_regex [lindex $rule 0]]
+    if {$name == "" || $pattern == ""} { return "" }
     return [format $template $name $pattern]
 }
 
 proc def_rule {rule} {
     set template "hi def vd%s ctermfg=%s"
     set name [to_clean_name [lindex $rule 0]]
-    set color [lindex $rule 1]
+    set color [rewrite_color [lindex $rule 1]]
+    if {$name == "" || $color == ""} { return "" }
     return [format $template $name $color]
 }
 
