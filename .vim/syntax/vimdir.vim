@@ -8,7 +8,7 @@ let b:current_syntax = "vimdir"
 syn match vdId          "^\d\+"
 syn match vdSeparator   ":"
 syn match vdPermissions "[-dcbpls][-rwx]\{9}"
-syn match vdDirectory     "[^\t]\+/"
+syn match vdDirectory     "[^\t ]\+/"
 " NOTE: tabs are used for field separation,
 "        however it is possible that the user has expandtab on.
 "       this would confuse the lexer, leading to unexpected results.
