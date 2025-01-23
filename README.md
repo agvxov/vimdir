@@ -6,8 +6,9 @@
 [X] renaming
 [X] deletion
 [X] change file permissions
-[X] change owner
+[ ] change owner
 [ ] swapping
+[ ] copying
 [ ] specify the deletion method (so trash can be supported)
 [X] display directories with a trailing `/`
 [X] recursion
@@ -15,7 +16,13 @@
 [X] use ${VIMDIREDITOR}
 
 ## SYNOPSIS
-       vidir [options] [directory]
+**vidir** **[***options***]** **[**directory**]**
+
+## DESCRIPTION
+Vimdir allows editing of directories and filenames in a text editor.
+If no directory is specified, the filenames of the current directory are edited.
+
+Vimdir is an extended reimplementation of *vidir(1)*.
 
 ## OPTIONS
 **-h**
@@ -54,6 +61,25 @@ The following is the format of an entry. The concrete syntax is command line fla
 
     <id> [permissions] [<owner>:group] <name>
 
+## OPERATIONS
+Changing a field will manupulate the file (e.g. renaming, chmod, chown).
+
+Swapping the names of files is allowed and should be handed correctly.
+
+Deleting a line will delete the file.
+
+Duplicating a line and changing the name will copy the file.
+
+## COLORS
+Vimdir uses the extension `.vimdir` for entry files,
+this can be used to recognize them in your editor.
+
+A Vim syntax file should be packaged with Vimdir.
+It is recommended to use it.
+
+If you are interested in generating your highlighting dynamically and based on **$LS_COLORS**,
+you might be interested in this:
+[https://github.com/trapd00r/vim-syntax-vidir-ls](https://github.com/trapd00r/vim-syntax-vidir-ls).
 
 ## ENVIRONMENT
 
@@ -73,3 +99,6 @@ The default editor is *Vi*.
 Vimdir will terminate at the first sign of an error,
 but it has no way to roll-back your filesystem,
 so be careful.
+
+You will not be able to manage files which have tab characters in their names.
+If you have aforementioned files, please seek the help of a specialist.
