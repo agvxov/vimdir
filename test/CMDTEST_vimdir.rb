@@ -197,3 +197,26 @@ class CMDTEST_mynesteddir < Cmdtest::Testcase
     end
   end
 end
+
+class CMDTEST_myswapdir < Cmdtest::Testcase
+  def setup
+    import_file "test/replacer.sh",   "./"
+    import_directory "test/myswapdir/", "./myswapdir/"
+  end
+
+  def test_trailing_slash_included
+    File.write('target.txt',
+      [
+        "000\t./myswapdir/file2.txt",
+        "002\t./myswapdir/file1.txt"
+      ].join("\n")
+    )
+
+    cmd "EDITOR=./replacer.sh vimdir -n ./myswapdir/" do
+      exit_zero
+      created_files ["vimdir_test_file.vimdir"]
+      removed_files ["target.txt"]
+      stderr_equal /.+/
+    end
+  end
+end
