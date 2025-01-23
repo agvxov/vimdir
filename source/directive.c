@@ -16,6 +16,7 @@
 typedef struct {
     char * name;
     struct stat st;
+    bool is_mentioned;
 } entry_t;
 
 static
@@ -57,8 +58,9 @@ int add_directory(const char * const folder) {
         }
 
         entry = (entry_t) {
-            .name = strdup(full_path),
-            .st   = file_stat,
+            .name         = strdup(full_path),
+            .st           = file_stat,
+            .is_mentioned = false,
         };
         kv_push(entry_t, entries, entry);
 
@@ -165,7 +167,6 @@ int execute_directive_file(FILE * f) {
     char line[LINE_SIZE];
     char buffer[1024];
     char * sp;
-    int expected_id = 0;
     int id;
 
     while (fgets(line, LINE_SIZE, f) != NULL) {
@@ -179,16 +180,10 @@ int execute_directive_file(FILE * f) {
             mytouch(buffer);
             continue;
         }
-          // deletion
-        while (expected_id != id) {
-            const char * last_filename = kv_A(entries, expected_id).name;
-            mydelete(last_filename);
-            ++expected_id;
-        }
-        ++expected_id;
         NEXT_FIELD;
 
         entry_t * entry = &kv_A(entries, id);
+        entry->is_mentioned = true;
 
         // Permission
         if (do_permissions) {
@@ -219,6 +214,14 @@ int execute_directive_file(FILE * f) {
 
         if (strcmp(entry->name, buffer)) {
             mymove(entry->name, buffer);
+        }
+    }
+
+    // Deletion
+    for (int i = 0; i < entries.n; i++) {
+        entry_t * entry = &kv_A(entries, i);
+        if (!entry->is_mentioned) {
+            mydelete(entry->name);
         }
     }
 
