@@ -14,7 +14,7 @@ extern void warning(const char * fmt, ...);
 
 #define CHECK_OPEN(f, n, E) \
     if (!f) { \
-        errorn(E_FILE_ACCESS, f); \
+        errorn(E_FILE_ACCESS, n); \
         E; \
     }
 
