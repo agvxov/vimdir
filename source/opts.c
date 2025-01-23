@@ -26,7 +26,7 @@ void get_env(void) {
     editor = "vi";
 
   set_custom_rm:
-    custom_rm = get_env("VIMDIRRM");
+    custom_rm = getenv("VIMDIRRM");
 
   end:
     return;
