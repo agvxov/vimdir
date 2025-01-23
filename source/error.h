@@ -2,7 +2,7 @@
 #define ERROR_H
 
 enum {
-    E_OPEN_EDITOR,
+    E_OPEN_EDITOR = 1,
     E_FILE_ACCESS,
     E_FILE_DELETE,
     E_FILE_MOVE,

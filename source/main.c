@@ -5,6 +5,7 @@
 #include "error.h"
 #include "opts.h"
 #include "directive.h"
+#include "file_utils.h"
 
 char * editor = NULL;
 char * folder = NULL;
@@ -14,7 +15,22 @@ bool is_recursive   = false;
 bool do_permissions = false;
 bool do_owner       = false;
 
-#define DEBUG
+int get_tmpfile_name(char * name_buffer) {
+  #if DEBUG == 1
+    strcpy(name_buffer, "vimdir_test_file.vimdir");
+
+    return 0;
+  #else
+    int fd;
+    
+    strcpy(name_buffer, "/tmp/vidirXXXXXX.vimdir");
+    fd = mkstemps(tmpfile_name);
+    if (fd == -1) { return 1; }
+    close(fd);
+
+    return 0;
+  #endif
+}
 
 int edit(const char * filename) {
     size_t cmd_len = strlen(editor) + sizeof(' ') + strlen(filename) + 1;
@@ -22,10 +38,11 @@ int edit(const char * filename) {
 
     snprintf(cmd, cmd_len, "%s %s", editor, filename);
 
-    // XXX
     int result = system(cmd);
-    if (result == -1) {
+    if (result == 127   // shell could not be executed
+    ||  result == -1) { // child process could not be created
         errorn(E_OPEN_EDITOR, editor);
+        return 1;
     } else
     if (WIFEXITED(result)
     &&  WEXITSTATUS(result) != 0) {
@@ -51,19 +68,14 @@ signed main(int argc, char * * argv) {
     get_env();
     parse_args(argc, argv);
 
-    // XXX: what if the user passed '/'?
-    size_t len = strlen(folder);
-    if (folder[len-1] == '/') {
-        folder[len-1] = '\0';
-    }
+    folder = trim_trailing_slashes(folder);
 
-    char * tmpfile_name;
+  create:
     FILE * tmpfile;
-  #ifdef DEBUG
-    tmpfile_name = "vimdir_test_file.vimdir";
-  #else
-    tmpfile_name = mktemp("/tmp/vidirXXXXXX.vimdir");
-  #endif
+    char tmpfile_name[32];
+
+    CHECK(get_tmpfile_name(tmpfile_name));
+
     tmpfile = fopen(tmpfile_name, "w+");
     CHECK_OPEN(tmpfile, tmpfile_name, goto end);
 
@@ -73,8 +85,10 @@ signed main(int argc, char * * argv) {
 
     fflush(tmpfile);
 
+  edit:
     CHECK(edit(tmpfile_name));
 
+  process:
     fclose(tmpfile);
     tmpfile = fopen(tmpfile_name, "r");
     CHECK_OPEN(tmpfile, tmpfile_name, goto end);

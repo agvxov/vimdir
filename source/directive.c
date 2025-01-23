@@ -3,10 +3,10 @@
 #include <stdio.h>
 #include <dirent.h>
 #include <string.h>
-#include <stdbool.h>
 #include <sys/stat.h>
 #include <pwd.h>
 #include <grp.h>
+#include <linux/limits.h>
 
 #include "kvec.h"
 #include "global.h"
@@ -36,7 +36,7 @@ int add_directory(const char * const folder) {
     DIR * dir = opendir(folder);
     CHECK_OPEN(dir, folder, return 1);
 
-    char full_path[1024];
+    char full_path[PATH_MAX];
     struct stat file_stat;
     struct dirent * mydirent;
     entry_t entry;
@@ -52,10 +52,7 @@ int add_directory(const char * const folder) {
         );
 
         int e = stat(full_path, &file_stat);
-        if (e == -1) {
-            errorn(E_FILE_ACCESS, full_path);
-            return 1;
-        }
+        CHECK_OPEN(!(e == -1), full_path, return 1);
 
         entry = (entry_t) {
             .name         = strdup(full_path),
@@ -74,14 +71,16 @@ int add_directory(const char * const folder) {
     return 0;
 }
 
-int init_directive_c(const char * folder) {
+int init_directive_c(const char * const folder) {
     init_file_utils(is_dry_run);
     kv_init(entries);
     kv_init(directory_queue);
 
     kv_push(const char*, directory_queue, folder);
     while (directory_queue.n) {
-        add_directory(kv_pop(directory_queue));
+        if (add_directory(kv_pop(directory_queue))) {
+            return 1;
+        }
     }
 
     qsort(
@@ -225,5 +224,6 @@ int execute_directive_file(FILE * f) {
         }
     }
 
+    #undef NEXT_FIELD
     return 0;
 }

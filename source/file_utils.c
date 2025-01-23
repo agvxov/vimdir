@@ -2,11 +2,22 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <pwd.h>
 #include <grp.h>
 #include "error.h"
+
+extern char * trim_trailing_slashes(char * path) {
+    int len = strlen(path);
+    while (len > 1
+       &&  path[len-1] == '/') {
+        path[len-1] = '\0';
+        --len;
+    }
+    return path;
+}
 
 int (*mytouch)(const char *filename) = NULL;
 int (*mydelete)(const char *filename) = NULL;

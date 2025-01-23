@@ -7,6 +7,8 @@
 extern int init_file_utils(bool is_dry_run);
 extern int deinit_file_utis();
 
+extern char * trim_trailing_slashes(char * path);
+
 extern char mode_type_to_char(mode_t m);
 extern mode_t char_to_mode_type(const char c);
 extern char * mode_to_str(mode_t mode, char * buffer);

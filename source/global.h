@@ -1,6 +1,8 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
+#include <stdbool.h>
+
 extern char * editor;
 extern char * folder;
 extern char * custom_rm;
