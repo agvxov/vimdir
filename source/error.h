@@ -10,7 +10,7 @@ enum {
     E_FLAG,
 };
 
-extern void errorn(int i, ...);
+extern void errorn(int n, ...);
 extern void warning(const char * fmt, ...);
 
 #define CHECK_OPEN(f, n, E) \

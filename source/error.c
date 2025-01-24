@@ -22,11 +22,11 @@ void warning(const char * fmt, ...) {
     va_end(argv);
 }
 
-void errorn(int i, ...) {
+void errorn(int n, ...) {
     va_list argv;
-    va_start(argv, i);
+    va_start(argv, n);
 
-    switch (i) {
+    switch (n) {
         case E_OPEN_EDITOR: verror("failed to open editor '%s'", argv);        break;
         case E_FILE_ACCESS: verror("failed to interact with file '%s'", argv); break;
         case E_FILE_DELETE: verror("failed to delete file '%s'", argv);        break;
