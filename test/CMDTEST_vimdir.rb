@@ -1,5 +1,9 @@
 require 'etc'
 
+#  ___          _
+# | _ ) __ _ __(_)__
+# | _ \/ _` (_-< / _|
+# |___/\__,_/__/_\__|
 class CMDTEST_basic < Cmdtest::Testcase
   def test_help
     cmd "vimdir -h" do
@@ -50,6 +54,13 @@ class CMDTEST_basic < Cmdtest::Testcase
   end
 end
 
+
+
+#  __  __         _ _
+# |  \/  |_  _ __| (_)_ _
+# | |\/| | || / _` | | '_|
+# |_|  |_|\_, \__,_|_|_|
+#         |__/
 class CMDTEST_mydir < Cmdtest::Testcase
   def setup
     import_file "test/replacer.sh",   "./"
@@ -175,6 +186,12 @@ class CMDTEST_mydir < Cmdtest::Testcase
   end
 end
 
+
+
+#  _  _        _          _    _ _
+# | \| |___ __| |_ ___ __| |__| (_)_ _
+# | .` / -_|_-<  _/ -_) _` / _` | | '_|
+# |_|\_\___/__/\__\___\__,_\__,_|_|_|
 class CMDTEST_mynesteddir < Cmdtest::Testcase
   def setup
     import_file "test/replacer.sh",   "./"
@@ -205,6 +222,13 @@ class CMDTEST_mynesteddir < Cmdtest::Testcase
   end
 end
 
+
+
+#  ___                      _ _
+# / __|_ __ ____ _ _ __  __| (_)_ _
+# \__ \ V  V / _` | '_ \/ _` | | '_|
+# |___/\_/\_/\__,_| .__/\__,_|_|_|
+#                 |_|
 class CMDTEST_myswapdir < Cmdtest::Testcase
   def setup
     import_file "test/replacer.sh", "./"
