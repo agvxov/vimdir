@@ -149,44 +149,44 @@ mode_t str_to_mode(const char *permissions) {
 // --- Dry implementations
 static
 int dry_touch(const char * filename) {
-    warning("touch '%s' (subsequent stats will fail)", filename);
+    notice("touch '%s' (subsequent stats will fail)", filename);
     return 0;
 }
 
 static
 int dry_delete(const char * filename) {
-    warning("delete '%s'", filename);
+    notice("delete '%s'", filename);
     return 0;
 }
 
 static
 int dry_chmod(const char * filename, mode_t mode) {
     char buf[11];
-    warning("chmod '%s' (%s)", filename, mode_to_str(mode, buf));
+    notice("chmod '%s' (%s)", filename, mode_to_str(mode, buf));
     return 0;
 }
 
 static
 int dry_chown(const char * filename, const char * owner, const char * group) {
-    warning("chown '%s' (%s:%s)", filename, owner, group);
+    notice("chown '%s' (%s:%s)", filename, owner, group);
     return 0;
 }
 
 static
 int dry_move(const char * filename, const char * newname) {
-    warning("rename '%s' (-> '%s')", filename, newname);
+    notice("rename '%s' (-> '%s')", filename, newname);
     return 0;
 }
 
 static
 int dry_copy(const char * filename, const char * newname) {
-    warning("copy '%s' (as '%s')", filename, newname);
+    notice("copy '%s' (as '%s')", filename, newname);
     return 0;
 }
 
 static
 move_data_t dry_mytempmove(const char * filename, const char * newname) {
-    warning("swap detected in a dry-run ('%s' <-> '%s'); the following logs will be inaccurate", filename, newname);
+    notice("swap detected in a dry-run ('%s' <-> '%s'); the following logs will be inaccurate", filename, newname);
     return (move_data_t) {
         .orig_name = strdup(filename),
         .curt_name = strdup(filename),

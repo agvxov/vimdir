@@ -17,7 +17,7 @@ enum {
 };
 
 extern void errorn(int n, ...);
-extern void warning(const char * fmt, ...);
+extern void notice(const char * fmt, ...);
 
 #define CHECK_OPEN(f, n, E) \
     if (!f) { \

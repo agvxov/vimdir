@@ -11,11 +11,11 @@ void verror(const char * fmt, va_list argv) {
     fdictate(stderr, "$0");
 }
 
-void warning(const char * fmt, ...) {
+void notice(const char * fmt, ...) {
     va_list argv;
     va_start(argv, fmt);
 
-    fdictatef(stderr, "$yvimdir: warning: ");
+    fdictatef(stderr, "$yvimdir: notice: ");
     vafdictatef(stderr, fmt, argv);
     fdictate(stderr, "$0");
 

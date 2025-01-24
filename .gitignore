@@ -5,3 +5,4 @@ vimdir_test_file.vimdir
 vimdir
 object/*
 vimdir.tar
+*.out
