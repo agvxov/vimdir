@@ -1,7 +1,9 @@
+#define _DEFAULT_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <unistd.h>
 #include "error.h"
 #include "opts.h"
 #include "directive.h"
@@ -21,10 +23,8 @@ int get_tmpfile_name(char * name_buffer) {
 
     return 0;
   #else
-    int fd;
-    
     strcpy(name_buffer, "/tmp/vidirXXXXXX.vimdir");
-    fd = mkstemps(tmpfile_name);
+    int fd = mkstemps(name_buffer, sizeof(".vimdir")-1);
     if (fd == -1) { return 1; }
     close(fd);
 
