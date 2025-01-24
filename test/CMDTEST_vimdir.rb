@@ -8,6 +8,13 @@ class CMDTEST_basic < Cmdtest::Testcase
     end
   end
 
+  def test_no_color
+    cmd "NO_COLOR=1 vimdir -h" do
+      exit_zero
+      stdout_equal /^[^\e]+$/m
+    end
+  end
+
   def test_wrong_arg
     cmd "vimdir -j" do
       exit_nonzero
