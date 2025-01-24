@@ -1,21 +1,6 @@
 # Vimdir
 > VIDIR iMproved
 
-## FEATUES
-[X] touching
-[X] renaming
-[X] deletion
-[X] change file permissions
-[ ] change owner
-[ ] swapping
-[ ] copying
-[ ] specify the deletion method (so trash can be supported)
-[X] display directories with a trailing `/`
-[X] recursion
-[X] dryrun
-[X] use ${VIMDIREDITOR}
-[X] NO_COLOR / color
-
 ## SYNOPSIS
 **vidir** **[***options***]** **[**directory**]**
 
@@ -106,5 +91,24 @@ Vimdir will terminate at the first sign of an error,
 but it has no way to roll-back your filesystem,
 so be careful.
 
-You will not be able to manage files which have tab characters in their names.
+You will not be able to manage files which have tab or newline characters in their names.
 If you have aforementioned files, please seek the help of a specialist.
+
+The first character of the permission string is simply in formative,
+its (changed) value is ignored.
+
+## FEATUES
+- [X] dryrun
+- [X] recursion
+- [X] display directories with a trailing `/`
+- [ ] touching
+- [ ] mkdir
+- [X] renaming
+- [X] deletion
+- [X] change file permissions
+- [X] change owner
+- [ ] swapping
+- [ ] copying
+- [ ] specify the deletion method (so trash can be supported)
+- [X] use `${VIMDIREDITOR}`
+- [X] `NO_COLOR` / color
