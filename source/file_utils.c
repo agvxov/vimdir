@@ -149,7 +149,7 @@ mode_t str_to_mode(const char *permissions) {
 // --- Dry implementations
 static
 int dry_touch(const char * filename) {
-    notice("touch '%s' (subsequent stats will fail)", filename);
+    notice("touch '%s' (dry; subsequent stats will fail)", filename);
     return 0;
 }
 
