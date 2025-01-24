@@ -96,18 +96,3 @@ If you have aforementioned files, please seek the help of a specialist.
 
 The first character of the permission string is simply in formative,
 its (changed) value is ignored.
-
-## FEATUES
-- [X] dryrun
-- [X] recursion
-- [X] display directories with a trailing `/`
-- [ ] touching / mkdir
-- [X] renaming
-- [X] deletion
-- [X] change file permissions
-- [X] change owner
-- [X] swapping
-- [X] copying
-- [X] specify the deletion method (so trash can be supported)
-- [X] use `${VIMDIREDITOR}`
-- [X] `NO_COLOR` / color
