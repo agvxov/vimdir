@@ -219,10 +219,10 @@ int moist_delete(const char * filename) {
             return 1;
         }
     } else {
-        //if (unlink(filename) != 0) {
-        //    errorn(E_FILE_DELETE, filename);
-        //    return 1;
-        //}
+        if (unlink(filename) != 0) {
+            errorn(E_FILE_DELETE, filename);
+            return 1;
+        }
     }
     return 0;
 }
