@@ -207,7 +207,7 @@ end
 
 class CMDTEST_myswapdir < Cmdtest::Testcase
   def setup
-    import_file "test/replacer.sh",   "./"
+    import_file "test/replacer.sh", "./"
     import_directory "test/myswapdir/", "./myswapdir/"
   end
 
@@ -215,7 +215,7 @@ class CMDTEST_myswapdir < Cmdtest::Testcase
     File.write('target.txt',
       [
         "000\t./myswapdir/file2.txt",
-        "002\t./myswapdir/file1.txt"
+        "002\t./myswapdir/file1.txt",
       ].join("\n")
     )
 
