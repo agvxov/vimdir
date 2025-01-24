@@ -1,5 +1,8 @@
 require 'etc'
 
+# NOTE:
+#  Every invocation which doesnt *have to* be a moist run should be a dry run.
+
 #  ___          _
 # | _ ) __ _ __(_)__
 # | _ \/ _` (_-< / _|
@@ -28,7 +31,7 @@ class CMDTEST_basic < Cmdtest::Testcase
   end
 
   def test_missing_folder
-    cmd "vimdir ./this/directory/does/not/exist/" do
+    cmd "vimdir -n ./this/directory/does/not/exist/" do
       exit_nonzero
       created_files ["vimdir_test_file.vimdir"]
       stderr_equal /\A.+error.+\n\z/
@@ -38,7 +41,7 @@ class CMDTEST_basic < Cmdtest::Testcase
   def test_editor
     import_file "test/saver.sh", "./"
 
-    cmd "EDITOR=./saver.sh vimdir ./" do
+    cmd "EDITOR=./saver.sh vimdir -n ./" do
       exit_zero
       created_files ["vimdir_test_file.vimdir", "output.txt"]
     end
@@ -47,7 +50,7 @@ class CMDTEST_basic < Cmdtest::Testcase
   def test_vimdir_editor
     import_file "test/saver.sh", "./"
 
-    cmd "VIMDIREDITOR=./saver.sh vimdir ./" do
+    cmd "VIMDIREDITOR=./saver.sh vimdir -n ./" do
       exit_zero
       created_files ["vimdir_test_file.vimdir", "output.txt"]
     end
@@ -77,6 +80,22 @@ class CMDTEST_mydir < Cmdtest::Testcase
     end
   end
 
+  def test_swapped_order_noop
+    File.write('target.txt',
+      [
+        "000\t./mydir/.gitkeep",
+        "002\t./mydir/script.sh",
+        "001\t./mydir/file.txt",
+      ].join("\n")
+    )
+
+    cmd "EDITOR=./replacer.sh vimdir -n ./mydir/" do
+      exit_zero
+      created_files ["vimdir_test_file.vimdir"]
+      removed_files ["target.txt"]
+    end
+  end
+
   def test_contents
     expected = [
         "000\t./mydir/.gitkeep",
@@ -87,7 +106,7 @@ class CMDTEST_mydir < Cmdtest::Testcase
     cmd "EDITOR=./saver.sh vimdir -n ./mydir/" do
       exit_zero
       created_files ["vimdir_test_file.vimdir", "output.txt"]
-      file_equal "vimdir_test_file.vimdir", expected
+      file_equal "output.txt", expected
     end
   end
 
@@ -116,7 +135,7 @@ class CMDTEST_mydir < Cmdtest::Testcase
     cmd "EDITOR=./saver.sh vimdir -n -p ./mydir/" do
       exit_zero
       created_files ["vimdir_test_file.vimdir", "output.txt"]
-      file_equal "vimdir_test_file.vimdir", expected
+      file_equal "output.txt", expected
     end
   end
 
@@ -132,11 +151,11 @@ class CMDTEST_mydir < Cmdtest::Testcase
     cmd "EDITOR=./saver.sh vimdir -n -o ./mydir/" do
       exit_zero
       created_files ["vimdir_test_file.vimdir", "output.txt"]
-      file_equal "vimdir_test_file.vimdir", expected
+      file_equal "output.txt", expected
     end
   end
 
-  def test_permissoin_owner_contents
+  def test_permission_owner_contents
     username  = Etc.getpwuid(1000).name
     groupname = Etc.getgrgid(1000).name
     expected = [
@@ -148,11 +167,11 @@ class CMDTEST_mydir < Cmdtest::Testcase
     cmd "EDITOR=./saver.sh vimdir -n -p -o ./mydir/" do
       exit_zero
       created_files ["vimdir_test_file.vimdir", "output.txt"]
-      file_equal "vimdir_test_file.vimdir", expected
+      file_equal "output.txt", expected
     end
   end
 
-  def test_del
+  def test_dry_del
     File.write('target.txt',
       [
         "000\t./mydir/.gitkeep",
@@ -183,23 +202,7 @@ class CMDTEST_mydir < Cmdtest::Testcase
     end
   end
 
-  def test_swapped_order_noop
-    File.write('target.txt',
-      [
-        "000\t./mydir/.gitkeep",
-        "002\t./mydir/script.sh",
-        "001\t./mydir/file.txt",
-      ].join("\n")
-    )
-
-    cmd "EDITOR=./replacer.sh vimdir -n ./mydir/" do
-      exit_zero
-      created_files ["vimdir_test_file.vimdir"]
-      removed_files ["target.txt"]
-    end
-  end
-
-  def test_chmod_file
+  def test_dry_chmod_file
     File.write('target.txt',
       [
         "000\t-rw-r--r--\t./mydir/.gitkeep",
@@ -216,7 +219,7 @@ class CMDTEST_mydir < Cmdtest::Testcase
     end
   end
 
-  def test_copy_file
+  def test_dry_copy_file
     File.write('target.txt',
       [
         "000\t./mydir/.gitkeep",
@@ -234,7 +237,7 @@ class CMDTEST_mydir < Cmdtest::Testcase
     end
   end
 
-  def test_touch_file
+  def test_dry_touch_file
     File.write('target.txt',
       [
         "000\t./mydir/.gitkeep",
@@ -266,15 +269,15 @@ class CMDTEST_mynesteddir < Cmdtest::Testcase
     import_directory "test/mynesteddir/", "./mynesteddir/"
   end
 
-  def test_trailing_slash_included
+  def test_trailing_slash_included_contents
     cmd "EDITOR=./saver.sh vimdir -n ./mynesteddir/" do
       exit_zero
       created_files ["vimdir_test_file.vimdir", "output.txt"]
-      file_equal "vimdir_test_file.vimdir", /^000\t.+nest\/$/
+      file_equal "output.txt", /^000\t.+nest\/$/
     end
   end
 
-  def test_recursive
+  def test_recursive_contents
     expected = [
         "000\t./mynesteddir/nest/",
         "001\t./mynesteddir/nest/.gitkeep",
@@ -283,7 +286,7 @@ class CMDTEST_mynesteddir < Cmdtest::Testcase
     cmd "EDITOR=./saver.sh vimdir -n -r ./mynesteddir/" do
       exit_zero
       created_files ["vimdir_test_file.vimdir", "output.txt"]
-      file_equal "vimdir_test_file.vimdir", expected
+      file_equal "output.txt", expected
     end
   end
 end
