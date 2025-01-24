@@ -163,6 +163,12 @@ int execute_directive_file(FILE * f) {
             } \
         } while (0)
     const int LINE_SIZE = 1024;
+    #define CHECK_FORMAT(n, x) do { \
+        if (n != x) { \
+            errorn(E_FORMAT); \
+            return 1; \
+        } \
+    } while (0)
     char line[LINE_SIZE];
     char buffer[1024];
     char * sp;
@@ -187,7 +193,8 @@ int execute_directive_file(FILE * f) {
         // Permission
         if (do_permissions) {
             mode_t mode;
-            sscanf(sp, "%s\t", buffer);
+            CHECK_FORMAT(1, sscanf(sp, "%s\t", buffer));
+
             mode = str_to_mode(buffer);
 
             if (entry->st.st_mode != mode) {
@@ -199,9 +206,11 @@ int execute_directive_file(FILE * f) {
         // Owner
         if (do_owner) {
             char buffer2[113];
-            sscanf(sp, "%[^:]:%s\t", buffer, buffer2);
+            CHECK_FORMAT(2, sscanf(sp, "%[^:]:%s\t", buffer, buffer2));
+
             struct passwd * usr = getpwuid(entry->st.st_uid);
             struct group  * grp = getgrgid(entry->st.st_gid);
+
             if (strcmp(usr->pw_name, buffer)
             ||  strcmp(grp->gr_name, buffer2)) {
                 mychown(entry->name, buffer, buffer2);
@@ -210,7 +219,7 @@ int execute_directive_file(FILE * f) {
         }
 
         // Name
-        sscanf(sp, "%s\n", buffer);
+        CHECK_FORMAT(1, sscanf(sp, "%s\n", buffer));
         size_t len = strlen(buffer);
         if (buffer[len-1] == '/') {
             buffer[len-1] = '\0';
