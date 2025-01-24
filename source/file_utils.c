@@ -19,6 +19,8 @@ extern char * trim_trailing_slashes(char * path) {
     return path;
 }
 
+static const char * custom_rm = NULL;
+
 int (*mytouch)(const char *filename) = NULL;
 int (*mydelete)(const char *filename) = NULL;
 int (*mychmod)(const char *filename, mode_t mode) = NULL;
@@ -36,8 +38,9 @@ static int moist_delete(const char * filename);
 static int moist_chmod(const char * filename, mode_t mode);
 static int moist_chown(const char * filename, const char * owner, const char * group);
 static int moist_move(const char * filename, const char * newname);
+int init_file_utils(bool is_dry_run, const char * custom_rm_) {
+    custom_rm = custom_rm_;
 
-int init_file_utils(bool is_dry_run) {
     if (is_dry_run) {
         mytouch  = dry_touch;
         mydelete = dry_delete;
@@ -61,6 +64,8 @@ int deinit_file_utis() {
     mychmod  = NULL;
     mychown  = NULL;
     mymove   = NULL;
+
+    custom_rm = NULL;
 
     return 0;
 }
@@ -173,9 +178,24 @@ int moist_touch(const char * filename) {
 
 static
 int moist_delete(const char * filename) {
-    if (unlink(filename) != 0) {
-        errorn(E_FILE_DELETE, filename);
-        return 1;
+    if (custom_rm) {
+        size_t cmd_len = strlen(custom_rm) + sizeof(' ') + strlen(filename) + 1;
+        char cmd[cmd_len];
+
+        snprintf(cmd, cmd_len, "%s %s", custom_rm, filename);
+
+        int result = system(cmd);
+        if (result == 127
+        ||  result == -1
+        || (WIFEXITED(result) && WEXITSTATUS(result) != 0)) {
+            errorn(E_FILE_DELETE, filename);
+            return 1;
+        }
+    } else {
+        //if (unlink(filename) != 0) {
+        //    errorn(E_FILE_DELETE, filename);
+        //    return 1;
+        //}
     }
     return 0;
 }

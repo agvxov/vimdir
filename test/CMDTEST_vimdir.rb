@@ -66,6 +66,7 @@ class CMDTEST_mydir < Cmdtest::Testcase
     import_file "test/replacer.sh",   "./"
     import_file "test/saver.sh",      "./"
     import_file "test/memoryhole.sh", "./"
+    import_file "test/trash.sh",      "./"
     import_directory "test/mydir/", "./mydir/"
   end
 
@@ -149,6 +150,21 @@ class CMDTEST_mydir < Cmdtest::Testcase
       created_files ["vimdir_test_file.vimdir"]
       removed_files ["target.txt"]
       stderr_equal /^.*delete '.*file.txt'.*$/
+    end
+  end
+
+  def test_del_custom
+    File.write('target.txt',
+      [
+        "000\t./mydir/.gitkeep",
+        "002\t./mydir/script.sh"
+      ].join("\n")
+    )
+
+    cmd "VIMDIRRM=./trash.sh EDITOR=./replacer.sh vimdir ./mydir/" do
+      exit_zero
+      created_files ["vimdir_test_file.vimdir", "mydir/file.txt.trash"]
+      removed_files ["target.txt", "mydir/file.txt"]
     end
   end
 

@@ -109,6 +109,6 @@ its (changed) value is ignored.
 - [X] change owner
 - [ ] swapping
 - [ ] copying
-- [ ] specify the deletion method (so trash can be supported)
+- [X] specify the deletion method (so trash can be supported)
 - [X] use `${VIMDIREDITOR}`
 - [X] `NO_COLOR` / color
