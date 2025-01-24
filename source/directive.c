@@ -213,6 +213,8 @@ int execute_directive_file(FILE * f) {
                 }
 
                 entry = &kv_A(entries, id);
+              
+                NEXT_FIELD;
             } else { // creation
                 char * const saved_sp = sp;
                 // skip to the name
@@ -236,8 +238,6 @@ int execute_directive_file(FILE * f) {
 
                 sp = saved_sp;
             }
-              
-            NEXT_FIELD;
         } while (0);
 
         // Copy
