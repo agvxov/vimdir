@@ -122,12 +122,12 @@ int make_directive_file(FILE * f) {
         }
         // Owner
         if (do_owner) {
-            struct passwd * pw = getpwuid(entry->st.st_uid);
-            struct group  * gr = getgrgid(entry->st.st_gid);
+            struct passwd * usr = getpwuid(entry->st.st_uid);
+            struct group  * grp = getgrgid(entry->st.st_gid);
 
             fprintf(f, "\t%s:%s",
-                pw->pw_name,
-                gr->gr_name
+                usr->pw_name,
+                grp->gr_name
             );
         }
         // Name
@@ -199,8 +199,13 @@ int execute_directive_file(FILE * f) {
         // Owner
         if (do_owner) {
             char buffer2[113];
-            sscanf(sp, "%s:%s\t", buffer, buffer2);
-            //mychown(filename, buffer, buffer2);
+            sscanf(sp, "%[^:]:%s\t", buffer, buffer2);
+            struct passwd * usr = getpwuid(entry->st.st_uid);
+            struct group  * grp = getgrgid(entry->st.st_gid);
+            if (strcmp(usr->pw_name, buffer)
+            ||  strcmp(grp->gr_name, buffer2)) {
+                mychown(entry->name, buffer, buffer2);
+            }
             NEXT_FIELD;
         }
 

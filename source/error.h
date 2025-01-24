@@ -6,6 +6,9 @@ enum {
     E_FILE_ACCESS,
     E_FILE_DELETE,
     E_FILE_MOVE,
+    E_FILE_CHOWN,
+    E_NO_USER,
+    E_NO_GROUP,
     E_FORMAT,
     E_FLAG,
 };

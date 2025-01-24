@@ -194,24 +194,25 @@ int moist_chown(const char * filename, const char * owner, const char * group) {
     uid_t uid = -1;
     gid_t gid = -1;
 
-    struct passwd * pwd = getpwnam(owner);
-    if (!pwd) {
-        fprintf(stderr, "Error: User '%s' not found\n", owner);
+    struct passwd * usr = getpwnam(owner);
+    if (!usr) {
+        errorn(E_NO_USER, owner);
         return 1;
     }
-    uid = pwd->pw_uid;
+    uid = usr->pw_uid;
 
     struct group * grp = getgrnam(group);
     if (!grp) {
-        fprintf(stderr, "Error: Group '%s' not found\n", group);
+        errorn(E_NO_GROUP, group);
         return 1;
     }
     gid = grp->gr_gid;
 
-    if (chown(filename, uid, gid) != 0) {
-        perror("Error changing file ownership");
+    if (chown(filename, uid, gid)) {
+        errorn(E_FILE_CHOWN, filename);
         return 1;
     }
+
     return 0;
 }
 
