@@ -7,6 +7,7 @@ enum {
     E_FILE_DELETE,
     E_FILE_MOVE,
     E_FORMAT,
+    E_FLAG,
 };
 
 extern void errorn(int i, ...);

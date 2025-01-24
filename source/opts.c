@@ -5,9 +5,11 @@
 #include <string.h>
 #include <getopt.h>
 #include "global.h"
+#include "error.h"
 #include "dictate.h"
 
-void usage() {
+static
+void usage(void) {
     dictate(
         "$B$gvimdir$0 $y[$boptions$y] <$bpath$y>$0\n"
         "  $B$g-h$0 : print help\n"
@@ -44,6 +46,9 @@ void get_env(void) {
 
 void parse_args(int argc, char * * argv) {
     int opt;
+
+    opterr = 0; // suppress default getopt error messages
+
     while ((opt = getopt(argc, argv, "hnpor")) != -1) {
         switch (opt) {
             case 'h': {
@@ -62,11 +67,11 @@ void parse_args(int argc, char * * argv) {
             case 'r': {
                 is_recursive = true;
             } break;
-            default: {
-                fprintf(stderr, "Unknown option: -%c\n", optopt);
+            case '?': {
+                errorn(E_FLAG, optopt);
                 usage();
                 exit(1);
-            } break;
+            }
         }
     }
 

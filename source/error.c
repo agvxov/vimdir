@@ -32,6 +32,7 @@ void errorn(int i, ...) {
         case E_FILE_DELETE: verror("failed to delete file '%s'", argv);        break;
         case E_FILE_MOVE:   verror("failed to move '%s' to '%s'", argv);       break;
         case E_FORMAT:      verror("directive-file format violation", argv);   break;
+        case E_FLAG:        verror("unknown flag '%c'", argv);                 break;
         default: verror("unknown error encountered; this is an illegal inner state", 0); break;
     }
 
