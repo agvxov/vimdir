@@ -2,6 +2,8 @@ require 'etc'
 
 # NOTE:
 #  Every invocation which doesnt *have to* be a moist run should be a dry run.
+#  Tests require `./vimdir_test_file.vimdir`,
+#   therefor they will only succeed on debug builds.
 
 #  ___          _
 # | _ ) __ _ __(_)__
