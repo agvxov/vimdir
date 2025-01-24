@@ -14,3 +14,4 @@
 - [X] use `${VIMDIREDITOR}`
 - [ ] dry and moist tests
 - [ ] stdin / no order
+- [X] remove tempfile

@@ -52,11 +52,6 @@ int edit(const char * filename) {
     return 0;
 }
 
-void clean_up(void) {
-    free(folder);
-    deinit_directive_c();
-}
-
 signed main(int argc, char * * argv) {
     #define CHECK(x) do { \
             if ((r = x)) { \
@@ -99,7 +94,13 @@ signed main(int argc, char * * argv) {
     if (tmpfile) {
         fclose(tmpfile);
     }
-    clean_up();
+    if (!r) {
+        unlink(tmpfile_name);
+    } else {
+        notice("the location of the preserved directive file is '%s'", tmpfile_name);
+    }
+    free(folder);
+    deinit_directive_c();
     #undef CHECK
 
     return r;

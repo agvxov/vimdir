@@ -91,8 +91,10 @@ Vimdir will terminate at the first sign of an error,
 but it has no way to roll-back your filesystem,
 so be careful.
 
+If Vimdir fails, the directive file is preserved and its path is returned to the user.
+
 You will not be able to manage files which have tab or newline characters in their names.
 If you have aforementioned files, please seek the help of a specialist.
 
-The first character of the permission string is simply in formative,
+The first character of the permission string is simply informative,
 its (changed) value is ignored.
