@@ -186,21 +186,6 @@ class CMDTEST_mydir < Cmdtest::Testcase
     end
   end
 
-  def test_del_custom
-    File.write('target.txt',
-      [
-        "000\t./mydir/.gitkeep",
-        "002\t./mydir/script.sh"
-      ].join("\n")
-    )
-
-    cmd "VIMDIRRM=./trash.sh EDITOR=./replacer.sh vimdir ./mydir/" do
-      exit_zero
-      created_files ["mydir/file.txt.trash"]
-      removed_files ["target.txt", "mydir/file.txt"]
-    end
-  end
-
   def test_dry_chmod_file
     File.write('target.txt',
       [
@@ -251,6 +236,65 @@ class CMDTEST_mydir < Cmdtest::Testcase
       stderr_equal /\A.*touch '.*new.txt'.*\n.*error.+\n.*notice.+\n\z/
     end
   end
+
+  def test_del
+    File.write('target.txt',
+      [
+        "000\t./mydir/.gitkeep",
+        "002\t./mydir/script.sh",
+      ].join("\n")
+    )
+
+    cmd "EDITOR=./replacer.sh vimdir ./mydir/" do
+      exit_zero
+      removed_files ["target.txt", "mydir/file.txt"]
+    end
+  end
+
+  def test_del_custom
+    File.write('target.txt',
+      [
+        "000\t./mydir/.gitkeep",
+        "002\t./mydir/script.sh",
+      ].join("\n")
+    )
+
+    cmd "VIMDIRRM=./trash.sh EDITOR=./replacer.sh vimdir ./mydir/" do
+      exit_zero
+      created_files ["mydir/file.txt.trash"]
+      removed_files ["target.txt", "mydir/file.txt"]
+    end
+  end
+
+  def test_copy_file
+    File.write('target.txt',
+      [
+        "000\t./mydir/.gitkeep",
+        "001\t./mydir/file.txt",
+        "001\t./mydir/file2.txt",
+        "002\t./mydir/script.sh",
+      ].join("\n")
+    )
+
+    cmd "EDITOR=./replacer.sh vimdir ./mydir/" do
+      exit_zero
+      created_files ["mydir/file2.txt"]
+      removed_files ["target.txt"]
+    end
+  end
+
+  def test_touch_file
+    File.write('target.txt',
+      [
+        "000\t./mydir/.gitkeep",
+        "001\t./mydir/file.txt",
+        "002\t./mydir/script.sh",
+        "./mydir/new.txt",
+      ].join("\n")
+    cmd "EDITOR=./replacer.sh vimdir ./mydir/" do
+      exit_zero
+      created_files ["mydir/new.txt"]
+      removed_files ["target.txt"]
 end
 
 
