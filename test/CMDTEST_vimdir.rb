@@ -34,7 +34,7 @@ class CMDTEST_basic < Cmdtest::Testcase
     cmd "vimdir -n ./this/directory/does/not/exist/" do
       exit_nonzero
       created_files ["vimdir_test_file.vimdir"]
-      stderr_equal /\A.+error.+\n\z/
+      stderr_equal /\A.*error.+\n.*notice.+\n\z/
     end
   end
 
@@ -43,7 +43,7 @@ class CMDTEST_basic < Cmdtest::Testcase
 
     cmd "EDITOR=./saver.sh vimdir -n ./" do
       exit_zero
-      created_files ["vimdir_test_file.vimdir", "output.txt"]
+      created_files ["output.txt"]
     end
   end
 
@@ -52,7 +52,7 @@ class CMDTEST_basic < Cmdtest::Testcase
 
     cmd "VIMDIREDITOR=./saver.sh vimdir -n ./" do
       exit_zero
-      created_files ["vimdir_test_file.vimdir", "output.txt"]
+      created_files ["output.txt"]
     end
   end
 end
@@ -76,7 +76,6 @@ class CMDTEST_mydir < Cmdtest::Testcase
   def test_noop
     cmd "EDITOR=./memoryhole.sh vimdir -n ./mydir/" do
       exit_zero
-      created_files ["vimdir_test_file.vimdir"]
     end
   end
 
@@ -91,7 +90,6 @@ class CMDTEST_mydir < Cmdtest::Testcase
 
     cmd "EDITOR=./replacer.sh vimdir -n ./mydir/" do
       exit_zero
-      created_files ["vimdir_test_file.vimdir"]
       removed_files ["target.txt"]
     end
   end
@@ -105,7 +103,7 @@ class CMDTEST_mydir < Cmdtest::Testcase
 
     cmd "EDITOR=./saver.sh vimdir -n ./mydir/" do
       exit_zero
-      created_files ["vimdir_test_file.vimdir", "output.txt"]
+      created_files ["output.txt"]
       file_equal "output.txt", expected
     end
   end
@@ -121,7 +119,7 @@ class CMDTEST_mydir < Cmdtest::Testcase
       exit_nonzero
       created_files ["vimdir_test_file.vimdir"]
       removed_files ["target.txt"]
-      stderr_equal /\A.+error.+\n\z/
+      stderr_equal /\A.*error.+\n.*notice.+\n\z/
     end
   end
 
@@ -134,7 +132,7 @@ class CMDTEST_mydir < Cmdtest::Testcase
 
     cmd "EDITOR=./saver.sh vimdir -n -p ./mydir/" do
       exit_zero
-      created_files ["vimdir_test_file.vimdir", "output.txt"]
+      created_files ["output.txt"]
       file_equal "output.txt", expected
     end
   end
@@ -150,7 +148,7 @@ class CMDTEST_mydir < Cmdtest::Testcase
 
     cmd "EDITOR=./saver.sh vimdir -n -o ./mydir/" do
       exit_zero
-      created_files ["vimdir_test_file.vimdir", "output.txt"]
+      created_files ["output.txt"]
       file_equal "output.txt", expected
     end
   end
@@ -166,7 +164,7 @@ class CMDTEST_mydir < Cmdtest::Testcase
 
     cmd "EDITOR=./saver.sh vimdir -n -p -o ./mydir/" do
       exit_zero
-      created_files ["vimdir_test_file.vimdir", "output.txt"]
+      created_files ["output.txt"]
       file_equal "output.txt", expected
     end
   end
@@ -181,7 +179,6 @@ class CMDTEST_mydir < Cmdtest::Testcase
 
     cmd "EDITOR=./replacer.sh vimdir -n ./mydir/" do
       exit_zero
-      created_files ["vimdir_test_file.vimdir"]
       removed_files ["target.txt"]
       stderr_equal /\A.*delete '.*file.txt'.*\n\z/
     end
@@ -197,7 +194,7 @@ class CMDTEST_mydir < Cmdtest::Testcase
 
     cmd "VIMDIRRM=./trash.sh EDITOR=./replacer.sh vimdir ./mydir/" do
       exit_zero
-      created_files ["vimdir_test_file.vimdir", "mydir/file.txt.trash"]
+      created_files ["mydir/file.txt.trash"]
       removed_files ["target.txt", "mydir/file.txt"]
     end
   end
@@ -213,7 +210,6 @@ class CMDTEST_mydir < Cmdtest::Testcase
 
     cmd "EDITOR=./replacer.sh vimdir -n -p ./mydir/" do
       exit_zero
-      created_files ["vimdir_test_file.vimdir"]
       removed_files ["target.txt"]
       stderr_equal /\A.*chmod '.*script.sh' \(.+\).*\n\z/
     end
@@ -231,7 +227,6 @@ class CMDTEST_mydir < Cmdtest::Testcase
 
     cmd "EDITOR=./replacer.sh vimdir -n ./mydir/" do
       exit_zero
-      created_files ["vimdir_test_file.vimdir"]
       removed_files ["target.txt"]
       stderr_equal /\A.*copy.*'.*file2.txt'.*\n\z/
     end
@@ -251,7 +246,7 @@ class CMDTEST_mydir < Cmdtest::Testcase
       exit_nonzero
       created_files ["vimdir_test_file.vimdir"]
       removed_files ["target.txt"]
-      stderr_equal /\A.*touch '.*new.txt'.*\n.*error.*\n\z/
+      stderr_equal /\A.*touch '.*new.txt'.*\n.*error.+\n.*notice.+\n\z/
     end
   end
 end
@@ -272,7 +267,7 @@ class CMDTEST_mynesteddir < Cmdtest::Testcase
   def test_trailing_slash_included_contents
     cmd "EDITOR=./saver.sh vimdir -n ./mynesteddir/" do
       exit_zero
-      created_files ["vimdir_test_file.vimdir", "output.txt"]
+      created_files ["output.txt"]
       file_equal "output.txt", /^000\t.+nest\/$/
     end
   end
@@ -285,7 +280,7 @@ class CMDTEST_mynesteddir < Cmdtest::Testcase
 
     cmd "EDITOR=./saver.sh vimdir -n -r ./mynesteddir/" do
       exit_zero
-      created_files ["vimdir_test_file.vimdir", "output.txt"]
+      created_files ["output.txt"]
       file_equal "output.txt", expected
     end
   end
@@ -314,7 +309,6 @@ class CMDTEST_myswapdir < Cmdtest::Testcase
 
     cmd "EDITOR=./replacer.sh vimdir -n ./myswapdir/" do
       exit_zero
-      created_files ["vimdir_test_file.vimdir"]
       removed_files ["target.txt"]
       stderr_equal /.+swap.+/
     end
@@ -330,7 +324,6 @@ class CMDTEST_myswapdir < Cmdtest::Testcase
 
     cmd "EDITOR=./replacer.sh vimdir ./myswapdir/" do
       exit_zero
-      created_files ["vimdir_test_file.vimdir"]
       removed_files ["target.txt"]
       changed_files ["myswapdir/file1.txt", "myswapdir/file2.txt"]
     end
