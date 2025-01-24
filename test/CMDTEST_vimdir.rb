@@ -136,23 +136,7 @@ class CMDTEST_mydir < Cmdtest::Testcase
     end
   end
 
-  def test_del_file
-    File.write('target.txt',
-      [
-        "000\t./mydir/.gitkeep",
-        "002\t./mydir/script.sh",
-        "001\t./mydir/file.txt",
-      ].join("\n")
-    )
-
-    cmd "EDITOR=./replacer.sh vimdir -n ./mydir/" do
-      exit_zero
-      created_files ["vimdir_test_file.vimdir"]
-      removed_files ["target.txt"]
-    end
-  end
-
-  def test_swapped_order_noop
+  def test_del
     File.write('target.txt',
       [
         "000\t./mydir/.gitkeep",
@@ -165,6 +149,22 @@ class CMDTEST_mydir < Cmdtest::Testcase
       created_files ["vimdir_test_file.vimdir"]
       removed_files ["target.txt"]
       stderr_equal /^.*delete '.*file.txt'.*$/
+    end
+  end
+
+  def test_swapped_order_noop
+    File.write('target.txt',
+      [
+        "000\t./mydir/.gitkeep",
+        "002\t./mydir/script.sh",
+        "001\t./mydir/file.txt",
+      ].join("\n")
+    )
+
+    cmd "EDITOR=./replacer.sh vimdir -n ./mydir/" do
+      exit_zero
+      created_files ["vimdir_test_file.vimdir"]
+      removed_files ["target.txt"]
     end
   end
 
