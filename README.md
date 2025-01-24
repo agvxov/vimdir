@@ -101,14 +101,13 @@ its (changed) value is ignored.
 - [X] dryrun
 - [X] recursion
 - [X] display directories with a trailing `/`
-- [ ] touching
-- [ ] mkdir
+- [ ] touching / mkdir
 - [X] renaming
 - [X] deletion
 - [X] change file permissions
 - [X] change owner
-- [ ] swapping
-- [ ] copying
+- [X] swapping
+- [X] copying
 - [X] specify the deletion method (so trash can be supported)
 - [X] use `${VIMDIREDITOR}`
 - [X] `NO_COLOR` / color

@@ -26,18 +26,25 @@ int (*mydelete)(const char *filename) = NULL;
 int (*mychmod)(const char *filename, mode_t mode) = NULL;
 int (*mychown)(const char *filename, const char *owner, const char *group) = NULL;
 int (*mymove)(const char *filename, const char *newname) = NULL;
+int (*mycopy)(const char *filename, const char *newname) = NULL;
+move_data_t (*mytempmove)(const char *filename, const char *newname) = NULL;
 
 static int dry_touch(const char * filename);
 static int dry_delete(const char * filename);
 static int dry_chmod(const char * filename, mode_t mode);
 static int dry_chown(const char * filename, const char * owner, const char * group);
 static int dry_move(const char * filename, const char * newname);
+static int dry_copy(const char * filename, const char * newname);
+static move_data_t dry_mytempmove(const char *filename, const char *newname);
 
 static int moist_touch(const char * filename);
 static int moist_delete(const char * filename);
 static int moist_chmod(const char * filename, mode_t mode);
 static int moist_chown(const char * filename, const char * owner, const char * group);
 static int moist_move(const char * filename, const char * newname);
+static int moist_copy(const char * filename, const char * newname);
+static move_data_t moist_mytempmove(const char *filename, const char *newname);
+
 int init_file_utils(bool is_dry_run, const char * custom_rm_) {
     custom_rm = custom_rm_;
 
@@ -47,12 +54,16 @@ int init_file_utils(bool is_dry_run, const char * custom_rm_) {
         mychmod  = dry_chmod;
         mychown  = dry_chown;
         mymove   = dry_move;
+        mycopy   = dry_copy;
+        mytempmove = dry_mytempmove;
     } else {
-        //mytouch  = moist_touch;
-        //mydelete = moist_delete;
-        //mychmod  = moist_chmod;
-        //mychown  = moist_chown;
-        //mymove   = moist_move;
+        mytouch  = moist_touch;
+        mydelete = moist_delete;
+        mychmod  = moist_chmod;
+        mychown  = moist_chown;
+        mymove   = moist_move;
+        mycopy   = moist_copy;
+        mytempmove = moist_mytempmove;
     }
 
     return 0;
@@ -78,8 +89,8 @@ char mode_type_to_char(mode_t m) {
         case S_IFBLK:  return 'b';  // block device
         case S_IFIFO:  return 'p';  // fifo (pipe)
         case S_IFLNK:  return 'l';  // symbolic link
-        case S_IFSOCK: return 's'; // socket
-        default: return '?';       // unknown
+        case S_IFSOCK: return 's';  // socket
+        default: return '?';        // unknown
     }
 }
 
@@ -138,7 +149,7 @@ mode_t str_to_mode(const char *permissions) {
 // --- Dry implementations
 static
 int dry_touch(const char * filename) {
-    warning("touch '%s'", filename);
+    warning("touch '%s' (subsequent stats will fail)", filename);
     return 0;
 }
 
@@ -163,8 +174,24 @@ int dry_chown(const char * filename, const char * owner, const char * group) {
 
 static
 int dry_move(const char * filename, const char * newname) {
-    warning("rename '%s' (-> %s)", filename, newname);
+    warning("rename '%s' (-> '%s')", filename, newname);
     return 0;
+}
+
+static
+int dry_copy(const char * filename, const char * newname) {
+    warning("copy '%s' (as '%s')", filename, newname);
+    return 0;
+}
+
+static
+move_data_t dry_mytempmove(const char * filename, const char * newname) {
+    warning("swap detected in a dry-run ('%s' <-> '%s'); the following logs will be inaccurate", filename, newname);
+    return (move_data_t) {
+        .orig_name = strdup(filename),
+        .curt_name = strdup(filename),
+        .dest_name = strdup(newname),
+    };
 }
 
 // --- Moist implementations
@@ -243,4 +270,56 @@ int moist_move(const char * filename, const char * newname) {
         return 1;
     }
     return 0;
+}
+
+static
+int moist_copy(const char * filename, const char * newname) {
+    // Is using system for copying terrible? yes.
+    // Do I have know a better solution thats not filled with footguns? no.
+    size_t cmd_len = strlen("cp -a")
+                   + sizeof(' ') + strlen(filename)
+                   + sizeof(' ') + strlen(newname)
+                   + 1
+    ;
+    char cmd[cmd_len];
+
+    snprintf(cmd, cmd_len, "cp -a %s %s", filename, newname);
+
+    int result = system(cmd);
+    if (result == 127
+    ||  result == -1
+    || (WIFEXITED(result) && WEXITSTATUS(result) != 0)) {
+        errorn(E_FILE_COPY, filename, newname);
+        return 1;
+    }
+
+    return 0;
+}
+
+static
+move_data_t moist_mytempmove(const char * filename, const char * newname) {
+    move_data_t r = {
+        .orig_name = NULL,
+        .curt_name = NULL,
+        .dest_name = NULL,
+    };
+
+    const int COLISION_DIGITS = 3;
+    const size_t buf_size = strlen(filename) + COLISION_DIGITS + sizeof("~");
+    char buffer[buf_size];
+
+    unsigned n = 0;
+    do {
+        snprintf(buffer, buf_size, "%s~%d", filename, n++);
+        if (n > 10 * COLISION_DIGITS) { goto end; }
+    } while (!access(buffer, F_OK));
+
+    if (mymove(filename, buffer)) { goto end; }
+
+    r.orig_name = strdup(filename);
+    r.curt_name = strdup(buffer);
+    r.dest_name = strdup(newname);
+
+  end:
+    return r;
 }

@@ -27,15 +27,18 @@ void errorn(int n, ...) {
     va_start(argv, n);
 
     switch (n) {
-        case E_OPEN_EDITOR: verror("failed to open editor '%s'", argv);        break;
-        case E_FILE_ACCESS: verror("failed to interact with file '%s'", argv); break;
-        case E_FILE_DELETE: verror("failed to delete file '%s'", argv);        break;
-        case E_FILE_MOVE:   verror("failed to move '%s' to '%s'", argv);       break;
-        case E_FILE_CHOWN:  verror("failed to chown '%s'", argv);              break;
-        case E_NO_USER:     verror("failed to find the user '%s'", argv);      break;
-        case E_NO_GROUP:    verror("failed to find the group '%s'", argv);     break;
-        case E_FORMAT:      verror("directive-file format violation", argv);   break;
-        case E_FLAG:        verror("unknown flag '%c'", argv);                 break;
+        case E_OPEN_EDITOR: verror("failed to open editor '%s'", argv);            break;
+        case E_FILE_ACCESS: verror("failed to interact with file '%s'", argv);     break;
+        case E_FILE_DELETE: verror("failed to delete file '%s'", argv);            break;
+        case E_FILE_MOVE:   verror("failed to move '%s' to '%s'", argv);           break;
+        case E_FILE_SWAP:   verror("failed to swap '%s' with '%s'", argv);         break;
+        case E_FILE_COPY:   verror("failed to copy '%s' to '%s'", argv);           break;
+        case E_FILE_CHOWN:  verror("failed to chown '%s'", argv);                  break;
+        case E_NO_USER:     verror("failed to find the user '%s'", argv);          break;
+        case E_NO_GROUP:    verror("failed to find the group '%s'", argv);         break;
+        case E_FORMAT:      verror("directive-file format violation", argv);       break;
+        case E_INDEX:       verror("file index violation encountered (%d)", argv); break; 
+        case E_FLAG:        verror("unknown flag '%c'", argv);                     break;
         default: verror("unknown error encountered; this is an illegal inner state", 0); break;
     }
 

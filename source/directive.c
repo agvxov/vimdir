@@ -3,9 +3,10 @@
 #include <stdio.h>
 #include <dirent.h>
 #include <string.h>
-#include <sys/stat.h>
+#include <unistd.h>
 #include <pwd.h>
 #include <grp.h>
+#include <sys/stat.h>
 #include <linux/limits.h>
 
 #include "kvec.h"
@@ -29,6 +30,8 @@ int entry_cmp(const void * a, const void * b) { // For qsort()
 static kvec_t(entry_t) entries;
 static kvec_t(const char*) directory_queue;
 
+static kvec_t(move_data_t) move_data;
+
 
 
 static
@@ -37,8 +40,8 @@ int add_directory(const char * const folder) {
     CHECK_OPEN(dir, folder, return 1);
 
     char full_path[PATH_MAX];
-    struct stat file_stat;
     struct dirent * mydirent;
+    struct stat file_stat;
     entry_t entry;
     while ((mydirent = readdir(dir)) != NULL) {
         if (strcmp(mydirent->d_name, ".") == 0
@@ -72,9 +75,10 @@ int add_directory(const char * const folder) {
 }
 
 int init_directive_c(const char * const folder) {
-    init_file_utils(is_dry_run);
+    init_file_utils(is_dry_run, custom_rm);
     kv_init(entries);
     kv_init(directory_queue);
+    kv_init(move_data);
 
     kv_push(const char*, directory_queue, folder);
     while (directory_queue.n) {
@@ -98,8 +102,16 @@ int deinit_directive_c(void) {
         free(kv_A(entries, i).name);
     }
 
+    for (int i = 0; i < move_data.n; i++) {
+        move_data_t move = kv_A(move_data, i);
+        free(move.orig_name);
+        free(move.curt_name);
+        free(move.dest_name);
+    }
+
     kv_destroy(directory_queue);
     kv_destroy(entries);
+    kv_destroy(move_data);
     deinit_file_utis();
 
     return 0;
@@ -159,36 +171,88 @@ int execute_directive_file(FILE * f) {
     #define NEXT_FIELD do { \
             if (*(sp = next_field(sp)) == '\0') { \
                 errorn(E_FORMAT); \
-                return 1; \
+                goto recovery; \
             } \
         } while (0)
-    const int LINE_SIZE = 1024;
     #define CHECK_FORMAT(n, x) do { \
         if (n != x) { \
             errorn(E_FORMAT); \
-            return 1; \
+            goto recovery; \
         } \
     } while (0)
+    /* io buffering
+     */
+    const int LINE_SIZE = 4096;
     char line[LINE_SIZE];
-    char buffer[1024];
+    char buffer[LINE_SIZE/2];
+    /* String Pointer, indexing `line`
+     */
     char * sp;
-    int id;
+    /* alias reference to the current entry being operated on
+     */
+    entry_t * entry;
+    /* since new files fille be missing from `entries`,
+     *  but we only the the latest one,
+     *  we buffer it on the stack
+     */
+    char touch_buffer[LINE_SIZE/2];
+    entry_t touch_entry;
 
     while (fgets(line, LINE_SIZE, f) != NULL) {
         sp = line;
 
         // ID
-        int e = sscanf(line, "%d\t", &id);
-          // creation
-        if (e != 1) {
-            sscanf(sp, "%s\n", buffer);
-            mytouch(buffer);
-            continue;
-        }
-        NEXT_FIELD;
+        do {
+            int id;
+            int e = sscanf(line, "%d\t", &id);
+            if (e == 1) { // normal entry
+                if (id < 0
+                ||  id > entries.n) {
+                    errorn(E_INDEX, id);
+                    goto recovery;
+                }
 
-        entry_t * entry = &kv_A(entries, id);
-        entry->is_mentioned = true;
+                entry = &kv_A(entries, id);
+            } else { // creation
+                char * const saved_sp = sp;
+                // skip to the name
+                if (do_permissions) { NEXT_FIELD; }
+                if (do_owner)       { NEXT_FIELD; }
+
+                CHECK_FORMAT(1, sscanf(sp, "%s\n", touch_buffer));
+
+                mytouch(touch_buffer);
+
+                struct stat file_stat;
+                int es = stat(touch_buffer, &file_stat);
+                CHECK_OPEN(!(es == -1), touch_buffer, goto recovery); // XXX
+
+                touch_entry = (entry_t) {
+                    .name         = touch_buffer,
+                    .st           = file_stat,
+                    .is_mentioned = false,
+                };
+                entry = &touch_entry;
+
+                sp = saved_sp;
+            }
+              
+            NEXT_FIELD;
+        } while (0);
+
+        // Copy
+        if (entry->is_mentioned) {
+            char * const saved_sp = sp;
+            // skip to the name
+            if (do_permissions) { NEXT_FIELD; }
+            if (do_owner)       { NEXT_FIELD; }
+
+            CHECK_FORMAT(1, sscanf(sp, "%s\n", buffer));
+
+            mycopy(entry->name, buffer);
+
+            sp = saved_sp;
+        }
 
         // Permission
         if (do_permissions) {
@@ -218,16 +282,31 @@ int execute_directive_file(FILE * f) {
             NEXT_FIELD;
         }
 
-        // Name
-        CHECK_FORMAT(1, sscanf(sp, "%s\n", buffer));
-        size_t len = strlen(buffer);
-        if (buffer[len-1] == '/') {
-            buffer[len-1] = '\0';
-        }
+        // Name (move)
+        if (!entry->is_mentioned) {
+            CHECK_FORMAT(1, sscanf(sp, "%s\n", buffer));
+            size_t len = strlen(buffer);
+            if (buffer[len-1] == '/') {
+                buffer[len-1] = '\0';
+            }
 
-        if (strcmp(entry->name, buffer)) {
-            mymove(entry->name, buffer);
+            if (strcmp(entry->name, buffer)) {
+                if (access(buffer, F_OK)) {
+                    mymove(entry->name, buffer);
+                } else {
+                    move_data_t move = mytempmove(entry->name, buffer);
+                    if (!move.orig_name) {
+                        errorn(E_FILE_SWAP, entry->name, buffer);
+                        goto recovery;
+                    }
+
+                    kv_push(move_data_t, move_data, move);
+                }
+            }
         }
+        
+        // -- Poke
+        entry->is_mentioned = true;
     }
 
     // Deletion
@@ -238,6 +317,35 @@ int execute_directive_file(FILE * f) {
         }
     }
 
+    // Swap (move)
+    for (int i = 0; i < move_data.n; i++) {
+        move_data_t move = kv_A(move_data, i);
+        // NOTE: we could be overwritting here;
+        //        thats the behaviour the user would expect
+        int result = mymove(move.curt_name, move.dest_name);
+        // on the otherhand, upon error,
+        //  you dont want your files replaced
+        if (result
+        &&  !access(move.orig_name, F_OK)) {
+            // the result of this is intentionally unchecked
+            mymove(move.curt_name, move.orig_name);
+        }
+    }
+
     #undef NEXT_FIELD
+    #undef CHECK_FORMAT
     return 0;
+
+  recovery:
+    /* If an error is encountered, we wish to leave the filesystem in a "valid" state.
+     * Therefor, files waiting to be swapped (possessing a temporary name) are restored back
+     *  (if possible, if we run into another error, theres not much to do).
+     */
+    for (int i = 0; i < move_data.n; i++) {
+        move_data_t move = kv_A(move_data, i);
+        if (!access(move.orig_name, F_OK)) {
+            mymove(move.curt_name, move.orig_name);
+        }
+    }
+    return 1;
 }

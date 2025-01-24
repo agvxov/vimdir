@@ -31,7 +31,7 @@ class CMDTEST_basic < Cmdtest::Testcase
     cmd "vimdir ./this/directory/does/not/exist/" do
       exit_nonzero
       created_files ["vimdir_test_file.vimdir"]
-      stderr_equal /.+error.+/
+      stderr_equal /\A.+error.+\n\z/
     end
   end
 
@@ -88,6 +88,21 @@ class CMDTEST_mydir < Cmdtest::Testcase
       exit_zero
       created_files ["vimdir_test_file.vimdir", "output.txt"]
       file_equal "vimdir_test_file.vimdir", expected
+    end
+  end
+
+  def test_false_entry
+    File.write('target.txt',
+      [
+        "005\t./mydir/.gitkeep",
+      ].join("\n")
+    )
+
+    cmd "EDITOR=./replacer.sh vimdir -n ./mydir/" do
+      exit_nonzero
+      created_files ["vimdir_test_file.vimdir"]
+      removed_files ["target.txt"]
+      stderr_equal /\A.+error.+\n\z/
     end
   end
 
@@ -149,7 +164,7 @@ class CMDTEST_mydir < Cmdtest::Testcase
       exit_zero
       created_files ["vimdir_test_file.vimdir"]
       removed_files ["target.txt"]
-      stderr_equal /^.*delete '.*file.txt'.*$/
+      stderr_equal /\A.*delete '.*file.txt'.*\n\z/
     end
   end
 
@@ -197,7 +212,43 @@ class CMDTEST_mydir < Cmdtest::Testcase
       exit_zero
       created_files ["vimdir_test_file.vimdir"]
       removed_files ["target.txt"]
-      stderr_equal /^.*chmod '.*script.sh' (.+).*$/
+      stderr_equal /\A.*chmod '.*script.sh' \(.+\).*\n\z/
+    end
+  end
+
+  def test_copy_file
+    File.write('target.txt',
+      [
+        "000\t./mydir/.gitkeep",
+        "001\t./mydir/file.txt",
+        "001\t./mydir/file2.txt",
+        "002\t./mydir/script.sh",
+      ].join("\n")
+    )
+
+    cmd "EDITOR=./replacer.sh vimdir -n ./mydir/" do
+      exit_zero
+      created_files ["vimdir_test_file.vimdir"]
+      removed_files ["target.txt"]
+      stderr_equal /\A.*copy.*'.*file2.txt'.*\n\z/
+    end
+  end
+
+  def test_touch_file
+    File.write('target.txt',
+      [
+        "000\t./mydir/.gitkeep",
+        "001\t./mydir/file.txt",
+        "002\t./mydir/script.sh",
+        "./mydir/new.txt",
+      ].join("\n")
+    )
+
+    cmd "EDITOR=./replacer.sh vimdir -n ./mydir/" do
+      exit_nonzero
+      created_files ["vimdir_test_file.vimdir"]
+      removed_files ["target.txt"]
+      stderr_equal /\A.*touch '.*new.txt'.*\n.*error.*\n\z/
     end
   end
 end
@@ -212,7 +263,6 @@ class CMDTEST_mynesteddir < Cmdtest::Testcase
   def setup
     import_file "test/replacer.sh",   "./"
     import_file "test/saver.sh",      "./"
-    import_file "test/memoryhole.sh", "./"
     import_directory "test/mynesteddir/", "./mynesteddir/"
   end
 
@@ -251,11 +301,11 @@ class CMDTEST_myswapdir < Cmdtest::Testcase
     import_directory "test/myswapdir/", "./myswapdir/"
   end
 
-  def test_swap
+  def test_dry_swap
     File.write('target.txt',
       [
         "000\t./myswapdir/file2.txt",
-        "002\t./myswapdir/file1.txt",
+        "001\t./myswapdir/file1.txt",
       ].join("\n")
     )
 
@@ -263,7 +313,23 @@ class CMDTEST_myswapdir < Cmdtest::Testcase
       exit_zero
       created_files ["vimdir_test_file.vimdir"]
       removed_files ["target.txt"]
-      stderr_equal /.+/
+      stderr_equal /.+swap.+/
+    end
+  end
+
+  def test_swap
+    File.write('target.txt',
+      [
+        "000\t./myswapdir/file2.txt",
+        "001\t./myswapdir/file1.txt",
+      ].join("\n")
+    )
+
+    cmd "EDITOR=./replacer.sh vimdir ./myswapdir/" do
+      exit_zero
+      created_files ["vimdir_test_file.vimdir"]
+      removed_files ["target.txt"]
+      changed_files ["myswapdir/file1.txt", "myswapdir/file2.txt"]
     end
   end
 end
