@@ -1,12 +1,19 @@
 SOURCE := main.c opts.c directive.c file_utils.c error.c dictate.c
 SOURCE := $(addprefix source/, ${SOURCE})
 
-CFLAGS := -O0
+CFLAGS += -Wno-unused-label
+
+ifeq (${DEBUG}, 1)
+  CFLAGS += -O0 -ggdb -Wall -Wpedantic
+  CPPFLAGS += -DDEBUG
+else
+  CFLAGS += -O3 -flto=auto -fomit-frame-pointer
+endif
 
 OUT := vimdir
 
 ${OUT}: ${SOURCE}
-	${CC} ${CFLAGS} -o ${OUT} ${SOURCE} -ggdb
+	${CC} ${CPPFLAGS} ${CFLAGS} -o ${OUT} ${SOURCE}
 
 test:
 	cmdtest --fast
@@ -23,5 +30,6 @@ install: bundle
 
 clean:
 	-rm ${OUT}
+	-rm vimdir.tar
 
 .PHONY: test
