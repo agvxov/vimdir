@@ -294,9 +294,50 @@ class CMDTEST_mydir < Cmdtest::Testcase
         "002\t./mydir/script.sh",
         "./mydir/new.txt",
       ].join("\n")
+    )
+
     cmd "EDITOR=./replacer.sh vimdir ./mydir/" do
       exit_zero
       created_files ["mydir/new.txt"]
+    end
+  end
+
+  def test_complex_touch_file
+    username  = Etc.getpwuid(1000).name
+    groupname = Etc.getgrgid(1000).name
+    File.write('target.txt',
+      [
+        "000\t-rw-r--r--\t#{username}:#{groupname}\t./mydir/.gitkeep",
+        "001\t-rw-r--r--\t#{username}:#{groupname}\t./mydir/file.txt",
+        "002\t-rwxr-xr-x\t#{username}:#{groupname}\t./mydir/script.sh",
+        "-rwxr-xr-x\t#{username}:#{groupname}\t./mydir/new.txt",
+      ].join("\n")
+    )
+
+    cmd "EDITOR=./replacer.sh vimdir -p -o ./mydir/" do
+      exit_zero
+      created_files ["mydir/new.txt"]
+    end
+  end
+
+  def test_complex_touch_file_invalid
+    username  = Etc.getpwuid(1000).name
+    groupname = Etc.getgrgid(1000).name
+    File.write('target.txt',
+      [
+        "000\t-rw-r--r--\t#{username}:#{groupname}\t./mydir/.gitkeep",
+        "001\t-rw-r--r--\t#{username}:#{groupname}\t./mydir/file.txt",
+        "002\t-rwxr-xr-x\t#{username}:#{groupname}\t./mydir/script.sh",
+        "-rwxr-xr-x\tnew.txt",
+      ].join("\n")
+    )
+
+    cmd "EDITOR=./replacer.sh vimdir -n -p -o ./mydir/" do
+      exit_nonzero
+      created_files ["vimdir_test_file.vimdir"]
+      stderr_equal /\A.+error.*\n.+notice.*\n\z/
+    end
+  end
 end
 
 
