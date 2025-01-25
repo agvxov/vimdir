@@ -373,6 +373,20 @@ class CMDTEST_mynesteddir < Cmdtest::Testcase
       file_equal "output.txt", expected
     end
   end
+
+  def test_del_dir
+    File.write('target.txt',
+      [
+        # %empty
+      ].join("\n")
+    )
+
+    cmd "EDITOR=./saver.sh vimdir -r ./mynesteddir/" do
+      exit_zero
+      created_files ["output.txt"]
+      removed_files ["./mynesteddir/nest/"]
+    end
+  end
 end
 
 
