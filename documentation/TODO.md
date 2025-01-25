@@ -4,7 +4,7 @@
 - [X] recursion
 - [X] display directories with a trailing `/`
 - [X] specify the deletion method (so trash can be supported)
-- [ ] touching / mkdir
+- [X] touching / mkdir
 - [X] renaming
 - [X] swapping
 - [X] deletion
