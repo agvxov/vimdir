@@ -164,7 +164,10 @@ char * next_field(const char * s) {
        &&  *s != '\0') {
        ++s;
     }
-    return (char*)(++s);
+    if (*s != '\0') {
+        ++s;
+    }
+    return (char*)s;
 }
 
 int execute_directive_file(FILE * f) {
