@@ -215,6 +215,16 @@ int moist_touch(const char * filename) {
 
 static
 int moist_delete(const char * filename) {
+    /* Theres the situation where the user attempts
+     *  to delete a recursively listed directory.
+     * He would delete all references to the directory
+     *  (otherwise it would be a stat error too).
+     * Since the entry came somewhere, its reasonably safe to assume the file should exist,
+     *  and if it does not, its not an actual error.
+     * Therefor, we simply make deletes on a missing file a nop.
+     */
+    if (access(filename, F_OK)) { return 0; }
+
     if (custom_rm) {
         size_t cmd_len = strlen(custom_rm) + sizeof(' ') + strlen(filename) + 1;
         char cmd[cmd_len];
