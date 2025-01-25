@@ -149,7 +149,12 @@ mode_t str_to_mode(const char *permissions) {
 // --- Dry implementations
 static
 int dry_touch(const char * filename) {
-    notice("touch '%s' (dry; subsequent stats will fail)", filename);
+    size_t len = strlen(filename);
+    if (filename[len-1] != '/' ) {
+        notice("touch '%s' (dry; subsequent stats will fail)", filename);
+    } else {
+        notice("mkdir '%s' (dry; subsequent stats will fail)", filename);
+    }
     return 0;
 }
 
@@ -197,9 +202,14 @@ move_data_t dry_mytempmove(const char * filename, const char * newname) {
 // --- Moist implementations
 static
 int moist_touch(const char * filename) {
-    FILE * f = fopen(filename, "w");
-    CHECK_OPEN(f, filename, return 1);
-    fclose(f);
+    size_t len = strlen(filename);
+    if (filename[len-1] != '/' ) {
+        FILE * f = fopen(filename, "w");
+        CHECK_OPEN(f, filename, return 1);
+        fclose(f);
+    } else {
+        mkdir(filename, 0777);
+    }
     return 0;
 }
 

@@ -14,6 +14,9 @@ extern mode_t char_to_mode_type(const char c);
 extern char * mode_to_str(mode_t mode, char * buffer);
 extern mode_t str_to_mode(const char *permissions);
 
+/*`mytouch` actually performs mkdir duty too,
+ *  if the last character of its argument is '/'
+ */
 extern int (*mytouch)(const char * filename);
 extern int (*mydelete)(const char * filename);
 extern int (*mychmod)(const char * filename, mode_t mode);
