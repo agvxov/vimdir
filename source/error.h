@@ -3,6 +3,7 @@
 
 enum {
     E_OPEN_EDITOR = 1,
+    E_IN_EDITOR,
     E_FILE_ACCESS,
     E_FILE_DELETE,
     E_FILE_MOVE,

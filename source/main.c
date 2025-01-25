@@ -46,6 +46,7 @@ int edit(const char * filename) {
     } else
     if (WIFEXITED(result)
     &&  WEXITSTATUS(result) != 0) {
+        errorn(E_IN_EDITOR, WEXITSTATUS(result));
         return 1;
     }
 
