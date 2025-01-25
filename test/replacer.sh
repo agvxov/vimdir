@@ -1,2 +1,2 @@
 #/bin/sh
-mv target.txt $1
+cp target.txt $1

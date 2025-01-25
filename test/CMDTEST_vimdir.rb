@@ -92,7 +92,6 @@ class CMDTEST_mydir < Cmdtest::Testcase
 
     cmd "EDITOR=./replacer.sh vimdir -n ./mydir/" do
       exit_zero
-      removed_files ["target.txt"]
     end
   end
 
@@ -120,7 +119,6 @@ class CMDTEST_mydir < Cmdtest::Testcase
     cmd "EDITOR=./replacer.sh vimdir -n ./mydir/" do
       exit_nonzero
       created_files ["vimdir_test_file.vimdir"]
-      removed_files ["target.txt"]
       stderr_equal /\A.*error.+\n.*notice.+\n\z/
     end
   end
@@ -181,7 +179,6 @@ class CMDTEST_mydir < Cmdtest::Testcase
 
     cmd "EDITOR=./replacer.sh vimdir -n ./mydir/" do
       exit_zero
-      removed_files ["target.txt"]
       stderr_equal /\A.*delete '.*file.txt'.*\n\z/
     end
   end
@@ -197,7 +194,6 @@ class CMDTEST_mydir < Cmdtest::Testcase
 
     cmd "EDITOR=./replacer.sh vimdir -n -p ./mydir/" do
       exit_zero
-      removed_files ["target.txt"]
       stderr_equal /\A.*chmod '.*script.sh' \(.+\).*\n\z/
     end
   end
@@ -214,7 +210,6 @@ class CMDTEST_mydir < Cmdtest::Testcase
 
     cmd "EDITOR=./replacer.sh vimdir -n ./mydir/" do
       exit_zero
-      removed_files ["target.txt"]
       stderr_equal /\A.*copy.*'.*file2.txt'.*\n\z/
     end
   end
@@ -232,7 +227,6 @@ class CMDTEST_mydir < Cmdtest::Testcase
     cmd "EDITOR=./replacer.sh vimdir -n ./mydir/" do
       exit_nonzero
       created_files ["vimdir_test_file.vimdir"]
-      removed_files ["target.txt"]
       stderr_equal /\A.*touch '.*new.txt'.*\n.*error.+\n.*notice.+\n\z/
     end
   end
@@ -247,7 +241,7 @@ class CMDTEST_mydir < Cmdtest::Testcase
 
     cmd "EDITOR=./replacer.sh vimdir ./mydir/" do
       exit_zero
-      removed_files ["target.txt", "mydir/file.txt"]
+      removed_files ["mydir/file.txt"]
     end
   end
 
@@ -262,7 +256,7 @@ class CMDTEST_mydir < Cmdtest::Testcase
     cmd "VIMDIRRM=./trash.sh EDITOR=./replacer.sh vimdir ./mydir/" do
       exit_zero
       created_files ["mydir/file.txt.trash"]
-      removed_files ["target.txt", "mydir/file.txt"]
+      removed_files ["mydir/file.txt"]
     end
   end
 
@@ -279,7 +273,6 @@ class CMDTEST_mydir < Cmdtest::Testcase
     cmd "EDITOR=./replacer.sh vimdir ./mydir/" do
       exit_zero
       created_files ["mydir/file2.txt"]
-      removed_files ["target.txt"]
     end
   end
 
@@ -294,7 +287,6 @@ class CMDTEST_mydir < Cmdtest::Testcase
     cmd "EDITOR=./replacer.sh vimdir ./mydir/" do
       exit_zero
       created_files ["mydir/new.txt"]
-      removed_files ["target.txt"]
 end
 
 
@@ -355,7 +347,6 @@ class CMDTEST_myswapdir < Cmdtest::Testcase
 
     cmd "EDITOR=./replacer.sh vimdir -n ./myswapdir/" do
       exit_zero
-      removed_files ["target.txt"]
       stderr_equal /.+swap.+/
     end
   end
@@ -370,7 +361,6 @@ class CMDTEST_myswapdir < Cmdtest::Testcase
 
     cmd "EDITOR=./replacer.sh vimdir ./myswapdir/" do
       exit_zero
-      removed_files ["target.txt"]
       changed_files ["myswapdir/file1.txt", "myswapdir/file2.txt"]
     end
   end
