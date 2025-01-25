@@ -57,6 +57,16 @@ class CMDTEST_basic < Cmdtest::Testcase
       created_files ["output.txt"]
     end
   end
+
+  def test_editor_fail
+    import_file "test/faulty_editor.sh", "./"
+
+    cmd "EDITOR=./faulty_editor.sh vimdir -n ./" do
+      exit_nonzero
+      created_files ["vimdir_test_file.vimdir"]
+      stderr_equal /\A.*error.+\n.*notice.+\n/
+    end
+  end
 end
 
 
