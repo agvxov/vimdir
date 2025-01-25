@@ -44,7 +44,7 @@ int add_directory(const char * const folder) {
     struct stat file_stat;
     entry_t entry;
     while ((mydirent = readdir(dir)) != NULL) {
-        if (strcmp(mydirent->d_name, ".") == 0
+        if (strcmp(mydirent->d_name, ".")  == 0
         ||  strcmp(mydirent->d_name, "..") == 0) {
             continue;
         }
@@ -230,7 +230,7 @@ int execute_directive_file(FILE * f) {
 
                 struct stat file_stat;
                 int es = stat(touch_buffer, &file_stat);
-                CHECK_OPEN(!(es == -1), touch_buffer, goto recovery); // XXX
+                CHECK_OPEN(!(es == -1), touch_buffer, goto recovery);
 
                 touch_entry = (entry_t) {
                     .name         = touch_buffer,

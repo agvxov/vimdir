@@ -183,7 +183,7 @@ class CMDTEST_mydir < Cmdtest::Testcase
     File.write('target.txt',
       [
         "000\t./mydir/.gitkeep",
-        "002\t./mydir/script.sh"
+        "002\t./mydir/script.sh",
       ].join("\n")
     )
 
