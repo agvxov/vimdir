@@ -177,6 +177,9 @@ int execute_directive_file(FILE * f) {
                 goto recovery; \
             } \
         } while (0)
+    #define CHECK(x) do { \
+        if (x) { goto recovery; } \
+    } while (0)
     #define CHECK_FORMAT(n, x) do { \
         if (n != x) { \
             errorn(E_FORMAT); \
@@ -265,7 +268,7 @@ int execute_directive_file(FILE * f) {
             mode = str_to_mode(buffer);
 
             if (entry->st.st_mode != mode) {
-                mychmod(entry->name, mode);
+                CHECK(mychmod(entry->name, mode));
             }
             NEXT_FIELD;
         }
@@ -280,7 +283,7 @@ int execute_directive_file(FILE * f) {
 
             if (strcmp(usr->pw_name, buffer)
             ||  strcmp(grp->gr_name, buffer2)) {
-                mychown(entry->name, buffer, buffer2);
+                CHECK(mychown(entry->name, buffer, buffer2));
             }
             NEXT_FIELD;
         }
@@ -316,7 +319,7 @@ int execute_directive_file(FILE * f) {
     for (int i = 0; i < entries.n; i++) {
         entry_t * entry = &kv_A(entries, i);
         if (!entry->is_mentioned) {
-            mydelete(entry->name);
+            CHECK(mydelete(entry->name));
         }
     }
 
@@ -336,6 +339,7 @@ int execute_directive_file(FILE * f) {
     }
 
     #undef NEXT_FIELD
+    #undef CHECK
     #undef CHECK_FORMAT
     return 0;
 
