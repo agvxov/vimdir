@@ -381,10 +381,9 @@ class CMDTEST_mynesteddir < Cmdtest::Testcase
       ].join("\n")
     )
 
-    cmd "EDITOR=./saver.sh vimdir -r ./mynesteddir/" do
+    cmd "EDITOR=./replacer.sh vimdir -r ./mynesteddir/" do
       exit_zero
-      created_files ["output.txt"]
-      removed_files ["./mynesteddir/nest/"]
+      removed_files ["mynesteddir/nest/", "mynesteddir/nest/.gitkeep"]
     end
   end
 end

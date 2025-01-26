@@ -1,4 +1,4 @@
-SOURCE := main.c opts.c directive.c file_utils.c error.c dictate.c
+SOURCE := main.c opts.c directive.c file_utils.c error.c dictate.c remove_all.c
 SOURCE := $(addprefix source/, ${SOURCE})
 
 CFLAGS += -Wno-unused-label

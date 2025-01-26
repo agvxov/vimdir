@@ -8,6 +8,7 @@
 #include <pwd.h>
 #include <grp.h>
 #include "error.h"
+#include "remove_all.h"
 
 extern char * trim_trailing_slashes(char * path) {
     int len = strlen(path);
@@ -239,7 +240,7 @@ int moist_delete(const char * filename) {
             return 1;
         }
     } else {
-        if (unlink(filename) != 0) {
+        if (remove_all(filename)) {
             errorn(E_FILE_DELETE, filename);
             return 1;
         }

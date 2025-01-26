@@ -5,6 +5,7 @@
 | :--: | :---------: |
 | kvec.h | Vector library. |
 | dictate.* | IO library. |
+| remove\_all.* | Recursive remove library. |
 | global.h | Global variables from flags and the environment. There are only a few and it shall be kept like that. |
 | main.c | Project core. Implements `global.h`. |
 | opts.* | Flag and environment handler. Fills up `global.h` |
