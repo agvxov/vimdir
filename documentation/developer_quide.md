@@ -13,6 +13,23 @@
 | directive.* | Responsible for creating parsing entries. |
 | file\_utils.* | File operations. This is where `directive.*` delegates commands to. Responsible for respecting dry-runs. |
 
+## Errors
+As mentioned,
+`error.*` are responsible for all the actual reporting.
+
+All errors which are reported are fatal.
+
+The only errors which are not fatal are those
+which occur during a shutdown caused by another error.
+
+Exception like in the sense that they continuously propagate upward.
+This is not an architectural nightmare only because
+the maximum stack frame number within the code base is very small.
+While the codebase has seemingly no direction to bloat to,
+if such thing were to happen,
+C++ (maybe Objective-C or some dialect)
+should be adapted (for true exceptions).
+
 ## LS\_COLORS
 Using the `ls_colors` Make target,
 we can statically render the vim highlighting script.
