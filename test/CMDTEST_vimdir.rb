@@ -4,6 +4,7 @@ require 'etc'
 #  Every invocation which doesnt *have to* be a moist run should be a dry run.
 #  Tests require `./vimdir_test_file.vimdir`,
 #   therefor they will only succeed on debug builds.
+#  Cmdtest does not consider modifying metadata a file change.
 
 #  ___          _
 # | _ ) __ _ __(_)__
@@ -336,6 +337,41 @@ class CMDTEST_mydir < Cmdtest::Testcase
       exit_nonzero
       created_files ["vimdir_test_file.vimdir"]
       stderr_equal /\A.+error.*\n.+notice.*\n\z/
+    end
+  end
+
+  def test_chmod_file
+    File.write('target.txt',
+      [
+        "000\t-rw-r--r--\t./mydir/.gitkeep",
+        "001\t-rw-r--r--\t./mydir/file.txt",
+        "002\t-rw-r--r--\t./mydir/script.sh",
+      ].join("\n")
+    )
+
+    cmd "EDITOR=./replacer.sh vimdir -p ./mydir/" do
+      exit_zero
+      assert !File.executable?("mydir/script.sh")
+    end
+  end
+
+  def test_chown_file
+    # NOTE: we assume the group `video` exists,
+    #        because we have to assume *something*
+    username = Etc.getpwuid(1000).name
+    File.write('target.txt',
+      [
+        "000\t#{username}:video\t./mydir/.gitkeep",
+        "001\t#{username}:video\t./mydir/file.txt",
+        "002\t#{username}:video\t./mydir/script.sh",
+      ].join("\n")
+    )
+
+    cmd "EDITOR=./replacer.sh vimdir -o ./mydir/" do
+      exit_zero
+      assert Etc.getgrgid(File.stat("mydir/.gitkeep").gid).name  == "video", Etc.getgrgid(File.stat("mydir/.gitkeep").gid)
+      assert Etc.getgrgid(File.stat("mydir/file.txt").gid).name  == "video", Etc.getgrgid(File.stat("mydir/.gitkeep").gid)
+      assert Etc.getgrgid(File.stat("mydir/script.sh").gid).name == "video", Etc.getgrgid(File.stat("mydir/.gitkeep").gid)
     end
   end
 end
