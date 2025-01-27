@@ -49,10 +49,16 @@ void parse_args(int argc, char * * argv) {
 
     opterr = 0; // suppress default getopt error messages
 
-    while ((opt = getopt(argc, argv, "hnpor")) != -1) {
+    while ((opt = getopt(argc, argv, "hvnpor")) != -1) {
         switch (opt) {
             case 'h': {
                 usage();
+                exit(0);
+            } break;
+            case 'v': {
+                dictate(
+                    #include "version.inc"
+                );
                 exit(0);
             } break;
             case 'n': {

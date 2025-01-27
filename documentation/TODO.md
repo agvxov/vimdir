@@ -12,15 +12,12 @@
 - [X] change owner
 - [X] copying
 - [X] use `${VIMDIREDITOR}`
-- [ ] dry and moist tests
+- [X] dry and moist tests
 - [X] remove tempfile
 
-## Maybe
-#### stdin / no order
-i saw this on on a (the) vidir fork
-it sounds good at first,
-but then you start to question:
-who the hell uses this and why?
+## Ideas
+Accept multiple folders and individual files.
 
-should be implemented when and if
-an answer is provided
+Accept input from stdin.
+Could possibly be useful for big data.
+Entries should not be (re)ordered.
