@@ -2,6 +2,7 @@
 
 #include <stdarg.h>
 #include <stdio.h>
+#include <dirent.h>
 #include "dictate.h"
 
 static
@@ -35,6 +36,7 @@ void errorn(int n, ...) {
         case E_FILE_SWAP:   verror("failed to swap '%s' with '%s'", argv);         break;
         case E_FILE_COPY:   verror("failed to copy '%s' to '%s'", argv);           break;
         case E_FILE_CHOWN:  verror("failed to chown '%s'", argv);                  break;
+        case E_DIR_ACCESS:  verror("failed to interact with dir '%s' (%s)", argv); break;
         case E_NO_USER:     verror("failed to find the user '%s'", argv);          break;
         case E_NO_GROUP:    verror("failed to find the group '%s'", argv);         break;
         case E_FORMAT:      verror("directive-file format violation", argv);       break;

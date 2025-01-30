@@ -437,6 +437,12 @@ class CMDTEST_myswapdir < Cmdtest::Testcase
     import_directory "test/myswapdir/", "./myswapdir/"
   end
 
+  def test_eh?
+    cmd "vimdir -n ./myswapdir/" do
+      exit_zero
+    end
+  end
+
   def test_dry_swap
     File.write('target.txt',
       [

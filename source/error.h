@@ -10,6 +10,7 @@ enum {
     E_FILE_SWAP,
     E_FILE_COPY,
     E_FILE_CHOWN,
+    E_DIR_ACCESS,
     E_NO_USER,
     E_NO_GROUP,
     E_FORMAT,

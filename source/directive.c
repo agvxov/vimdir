@@ -1,6 +1,7 @@
 #include "directive.h"
 
 #include <stdio.h>
+#include <errno.h>
 #include <dirent.h>
 #include <string.h>
 #include <unistd.h>
@@ -35,9 +36,31 @@ static kvec_t(move_data_t) move_data;
 
 
 static
+char * opendir_errno_to_str(int e) {
+    #define MAX_SIZE 8
+    static char r[MAX_SIZE];
+
+    switch (e) {
+       case EACCES:  memcpy(r, "EACCES",  sizeof("EACCES"));  break;
+       case EBADF:   memcpy(r, "EBADF",   sizeof("EBADF"));   break;
+       case EMFILE:  memcpy(r, "EMFILE",  sizeof("EMFILE"));  break;
+       case ENFILE:  memcpy(r, "ENFILE",  sizeof("ENFILE"));  break;
+       case ENOENT:  memcpy(r, "ENOENT",  sizeof("ENOENT"));  break;
+       case ENOMEM:  memcpy(r, "ENOMEM",  sizeof("ENOMEM"));  break;
+       case ENOTDIR: memcpy(r, "ENOTDIR", sizeof("ENOTDIR")); break;
+    }
+
+    return r;
+    #undef MAX_SIZE
+}
+
+static
 int add_directory(const char * const folder) {
     DIR * dir = opendir(folder);
-    CHECK_OPEN(dir, folder, return 1);
+    if (!dir) {
+        errorn(E_DIR_ACCESS, folder, opendir_errno_to_str(errno));
+        return 1;
+    }
 
     char full_path[PATH_MAX];
     struct dirent * mydirent;
