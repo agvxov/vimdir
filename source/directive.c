@@ -290,7 +290,7 @@ int execute_directive_file(FILE * f) {
 
         // Name (move)
         if (!entry->is_mentioned) {
-            CHECK_FORMAT(1, sscanf(sp, "%s\n", buffer));
+            CHECK_FORMAT(1, sscanf(sp, "%[^\n]", buffer));
             size_t len = strlen(buffer);
             if (buffer[len-1] == '/') {
                 buffer[len-1] = '\0';

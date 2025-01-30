@@ -227,10 +227,15 @@ int moist_delete(const char * filename) {
     if (access(filename, F_OK)) { return 0; }
 
     if (custom_rm) {
-        size_t cmd_len = strlen(custom_rm) + sizeof(' ') + strlen(filename) + 1;
+        size_t cmd_len = strlen(custom_rm)
+                       + sizeof(' ')
+                       + sizeof('\'')*2
+                       + strlen(filename)
+                       + 1
+        ;
         char cmd[cmd_len];
 
-        snprintf(cmd, cmd_len, "%s %s", custom_rm, filename);
+        snprintf(cmd, cmd_len, "%s '%s'", custom_rm, filename);
 
         int result = system(cmd);
         if (result == 127
@@ -298,13 +303,13 @@ int moist_copy(const char * filename, const char * newname) {
     // Is using system for copying terrible? yes.
     // Do I have know a better solution thats not filled with footguns? no.
     size_t cmd_len = strlen("cp -a")
-                   + sizeof(' ') + strlen(filename)
-                   + sizeof(' ') + strlen(newname)
+                   + sizeof(' ') + sizeof('\'')*2 + strlen(filename)
+                   + sizeof(' ') + sizeof('\'')*2 + strlen(newname)
                    + 1
     ;
     char cmd[cmd_len];
 
-    snprintf(cmd, cmd_len, "cp -a %s %s", filename, newname);
+    snprintf(cmd, cmd_len, "cp -a '%s' '%s'", filename, newname);
 
     int result = system(cmd);
     if (result == 127

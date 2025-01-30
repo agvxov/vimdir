@@ -465,3 +465,52 @@ class CMDTEST_myswapdir < Cmdtest::Testcase
     end
   end
 end
+
+
+
+#  ___                      _ _
+# / __|_ __  __ _ __ ___ __| (_)_ _
+# \__ \ '_ \/ _` / _/ -_) _` | | '_|
+# |___/ .__/\__,_\__\___\__,_|_|_|
+#     |_|
+class CMDTEST_myswapdir < Cmdtest::Testcase
+  def setup
+    import_file "test/replacer.sh", "./"
+    import_file "test/saver.sh",    "./"
+    import_directory "test/myspacedir/", "./myspacedir/"
+  end
+
+  def test_space_contents
+    expected = [
+        "000\t./myspacedir/laptop/",
+        "001\t./myspacedir/laptop/with a spacebar",
+        "002\t./myspacedir/my space.txt",
+        "003\t./myspacedir/space bar/",
+        "004\t./myspacedir/space bar/wine",
+    ]
+
+    cmd "EDITOR=./saver.sh vimdir -n -r ./myspacedir/" do
+      exit_zero
+      created_files ["output.txt"]
+      file_equal "output.txt", expected
+    end
+  end
+
+  def test_space_copy
+    File.write('target.txt',
+      [
+        "000\t./myspacedir/laptop/",
+        "001\t./myspacedir/laptop/with a spacebar",
+        "002\t./myspacedir/my space.txt",
+        "002\t./myspacedir/myspace.txt",
+        "003\t./myspacedir/space bar/",
+        "004\t./myspacedir/space bar/wine",
+      ].join("\n")
+    )
+
+    cmd "EDITOR=./replacer.sh vimdir -r ./myspacedir/" do
+      exit_zero
+      created_files ["myspacedir/myspace.txt"]
+    end
+  end
+end
