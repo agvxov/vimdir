@@ -5,6 +5,7 @@ CFLAGS += -Wno-unused-label
 
 ifeq (${DEBUG}, 1)
   CFLAGS += -O0 -ggdb -Wall -Wpedantic
+  CFLAGS += -fsanitize=address
   CPPFLAGS += -DDEBUG
 else
   CFLAGS += -O3 -flto=auto -fomit-frame-pointer
