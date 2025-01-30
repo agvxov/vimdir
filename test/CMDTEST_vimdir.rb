@@ -447,7 +447,7 @@ class CMDTEST_myswapdir < Cmdtest::Testcase
 
     cmd "EDITOR=./replacer.sh vimdir -n ./myswapdir/" do
       exit_zero
-      stderr_equal /.+swap.+/
+      stderr_equal /.+swap detected.+/
     end
   end
 
