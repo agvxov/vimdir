@@ -14,6 +14,7 @@
 - [X] use `${VIMDIREDITOR}`
 - [X] dry and moist tests
 - [X] remove tempfile
+- [ ] the ordering can be wrong if directories share the same prefix
 
 ## Ideas
 Accept multiple folders and individual files.
@@ -21,3 +22,6 @@ Accept multiple folders and individual files.
 Accept input from stdin.
 Could possibly be useful for big data.
 Entries should not be (re)ordered.
+
+Maybe do away with the default `rm` and require VIMDIRRM to be set
+(while having some special value to signal `remove_all()`)?
