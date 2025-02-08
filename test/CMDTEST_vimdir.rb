@@ -11,6 +11,10 @@ require 'etc'
 # | _ \/ _` (_-< / _|
 # |___/\__,_/__/_\__|
 class CMDTEST_basic < Cmdtest::Testcase
+  def setup
+    ENV['VIMDIRRM'] = ''
+  end
+
   def test_help
     cmd "vimdir -h" do
       exit_zero
@@ -79,6 +83,7 @@ end
 #         |__/
 class CMDTEST_mydir < Cmdtest::Testcase
   def setup
+    ENV['VIMDIRRM'] = ''
     import_file "test/replacer.sh",   "./"
     import_file "test/saver.sh",      "./"
     import_file "test/memoryhole.sh", "./"
@@ -384,6 +389,7 @@ end
 # |_|\_\___/__/\__\___\__,_\__,_|_|_|
 class CMDTEST_mynesteddir < Cmdtest::Testcase
   def setup
+    ENV['VIMDIRRM'] = ''
     import_file "test/replacer.sh",   "./"
     import_file "test/saver.sh",      "./"
     import_directory "test/mynesteddir/", "./mynesteddir/"
@@ -433,6 +439,7 @@ end
 #                 |_|
 class CMDTEST_myswapdir < Cmdtest::Testcase
   def setup
+    ENV['VIMDIRRM'] = ''
     import_file "test/replacer.sh", "./"
     import_directory "test/myswapdir/", "./myswapdir/"
   end
@@ -481,6 +488,7 @@ end
 #     |_|
 class CMDTEST_myswapdir < Cmdtest::Testcase
   def setup
+    ENV['VIMDIRRM'] = ''
     import_file "test/replacer.sh", "./"
     import_file "test/saver.sh",    "./"
     import_directory "test/myspacedir/", "./myspacedir/"
@@ -530,6 +538,7 @@ end
 # 
 class CMDTEST_myswapdir < Cmdtest::Testcase
   def setup
+    ENV['VIMDIRRM'] = ''
     import_file "test/saver.sh",    "./"
     import_directory "test/myunfortunateprefixdir/", "./myprefixdir/"
   end
