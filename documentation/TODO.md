@@ -14,7 +14,7 @@
 - [X] use `${VIMDIREDITOR}`
 - [X] dry and moist tests
 - [X] remove tempfile
-- [ ] the ordering can be wrong if directories share the same prefix
+- [X] path ordering that accounts for `-` (recursion; common prefix)
 
 ## Ideas
 Accept multiple folders and individual files.

@@ -520,3 +520,32 @@ class CMDTEST_myswapdir < Cmdtest::Testcase
     end
   end
 end
+
+
+
+#  ___          __ _        _ _
+# | _ \_ _ ___ / _(_)_ ____| (_)_ _
+# |  _/ '_/ -_)  _| \ \ / _` | | '_|
+# |_| |_| \___|_| |_/_\_\__,_|_|_|
+# 
+class CMDTEST_myswapdir < Cmdtest::Testcase
+  def setup
+    import_file "test/saver.sh",    "./"
+    import_directory "test/myunfortunateprefixdir/", "./myprefixdir/"
+  end
+
+  def test_prefix_order
+    expected = [
+        "000\t./myprefixdir/prefix/",
+        "001\t./myprefixdir/prefix/postfix",
+        "002\t./myprefixdir/prefix-postfix",
+        "003\t./myprefixdir/prefixPostfix",
+    ]
+
+    cmd "EDITOR=./saver.sh vimdir -n -r ./myprefixdir/" do
+      exit_zero
+      created_files ["output.txt"]
+      file_equal "output.txt", expected
+    end
+  end
+end

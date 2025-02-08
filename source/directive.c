@@ -21,11 +21,26 @@ typedef struct {
     bool is_mentioned;
 } entry_t;
 
+static inline
+int path_cmp(const char * a, const char * b) {
+    while (*a == *b) {
+        if (!(*a)) { goto end; }
+        ++a;
+        ++b;
+    }
+
+    if (*a == '/' && *b != '\0') { return -1; }
+    if (*b == '/' && *a != '\0') { return  1; }
+
+  end:
+    return *(unsigned char *)a - *(unsigned char *)b;
+}
+
 static
 int entry_cmp(const void * a, const void * b) { // For qsort()
     const entry_t * const A = a;
     const entry_t * const B = b;
-    return strcmp(A->name, B->name);
+    return path_cmp(A->name, B->name);
 }
 
 static kvec_t(entry_t) entries;
