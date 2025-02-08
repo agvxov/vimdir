@@ -30,15 +30,25 @@ void get_env(void) {
     
   set_editor:
     editor = getenv("VIMDIREDITOR");
-    if (editor) { goto set_custom_rm; }
+    if (editor
+    &&  editor[0] != '\0') {
+        goto set_custom_rm;
+    }
 
     editor = getenv("EDITOR");
-    if (editor) { goto set_custom_rm; }
+    if (editor
+    &&  editor[0] != '\0') {
+        goto set_custom_rm;
+    }
 
     editor = "vi";
 
   set_custom_rm:
     custom_rm = getenv("VIMDIRRM");
+    if (custom_rm
+    &&  custom_rm[0] == '\0') {
+        custom_rm = NULL;
+    }
 
   end:
     return;
