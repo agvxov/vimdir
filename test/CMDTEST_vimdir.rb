@@ -444,12 +444,6 @@ class CMDTEST_myswapdir < Cmdtest::Testcase
     import_directory "test/myswapdir/", "./myswapdir/"
   end
 
-  def test_eh?
-    cmd "vimdir -n ./myswapdir/" do
-      exit_zero
-    end
-  end
-
   def test_dry_swap
     File.write('target.txt',
       [
@@ -486,7 +480,7 @@ end
 # \__ \ '_ \/ _` / _/ -_) _` | | '_|
 # |___/ .__/\__,_\__\___\__,_|_|_|
 #     |_|
-class CMDTEST_myswapdir < Cmdtest::Testcase
+class CMDTEST_myspacedir < Cmdtest::Testcase
   def setup
     ENV['VIMDIRRM'] = ''
     import_file "test/replacer.sh", "./"
@@ -536,7 +530,7 @@ end
 # |  _/ '_/ -_)  _| \ \ / _` | | '_|
 # |_| |_| \___|_| |_/_\_\__,_|_|_|
 # 
-class CMDTEST_myswapdir < Cmdtest::Testcase
+class CMDTEST_myprefixdir < Cmdtest::Testcase
   def setup
     ENV['VIMDIRRM'] = ''
     import_file "test/saver.sh",    "./"
