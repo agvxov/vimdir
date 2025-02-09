@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <unistd.h>
+#include "global.h"
 #include "error.h"
 #include "opts.h"
 #include "directive.h"
@@ -17,6 +18,7 @@ bool is_recursive   = false;
 bool do_permissions = false;
 bool do_owner       = false;
 
+static
 int get_tmpfile_name(char * name_buffer) {
   #if DEBUG == 1
     strcpy(name_buffer, "vimdir_test_file.vimdir");
@@ -32,6 +34,7 @@ int get_tmpfile_name(char * name_buffer) {
   #endif
 }
 
+static
 int edit(const char * filename) {
     size_t cmd_len = strlen(editor) + sizeof(' ') + strlen(filename) + 1;
     char cmd[cmd_len];
@@ -67,7 +70,7 @@ signed main(int argc, char * * argv) {
     folder = trim_trailing_slashes(folder);
 
   create:
-    FILE * tmpfile;
+    FILE * tmpfile = NULL;
     char tmpfile_name[32];
 
     CHECK(get_tmpfile_name(tmpfile_name));

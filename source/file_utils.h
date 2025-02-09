@@ -3,9 +3,10 @@
 
 #include <stdbool.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 
 extern int init_file_utils(bool is_dry_run, const char * custom_rm_);
-extern int deinit_file_utis();
+extern int deinit_file_utis(void);
 
 extern char * trim_trailing_slashes(char * path);
 

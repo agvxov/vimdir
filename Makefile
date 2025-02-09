@@ -1,15 +1,18 @@
 SOURCE := main.c opts.c directive.c file_utils.c error.c dictate.c remove_all.c
 SOURCE := $(addprefix source/, ${SOURCE})
 
-CFLAGS += -Wno-unused-label
-
 ifeq (${DEBUG}, 1)
+  CPPFLAGS += -DDEBUG
   CFLAGS += -O0 -ggdb -Wall -Wpedantic
   CFLAGS += -fsanitize=address
-  CPPFLAGS += -DDEBUG
+  ifeq (${CC}, clang)
+    CFLAGS += -Weverything -Wno-switch-default -std=c23 -Wno-pre-c23-compat
+  endif
 else
   CFLAGS += -O3 -flto=auto -fomit-frame-pointer
 endif
+
+CFLAGS += -Wno-unused-label
 
 OUT := vimdir
 

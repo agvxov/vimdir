@@ -21,10 +21,11 @@ enum {
 extern void errorn(int n, ...);
 extern void notice(const char * fmt, ...);
 
-#define CHECK_OPEN(f, n, E) \
-    if (!f) { \
-        errorn(E_FILE_ACCESS, n); \
-        E; \
-    }
+#define CHECK_OPEN(f, n, E) do { \
+        if (!f) { \
+            errorn(E_FILE_ACCESS, n); \
+            E; \
+        } \
+    } while (0)
 
 #endif

@@ -33,7 +33,7 @@ int path_cmp(const char * a, const char * b) {
     if (*b == '/' && *a != '\0') { return  1; }
 
   end:
-    return *(unsigned char *)a - *(unsigned char *)b;
+    return *(const unsigned char *)a - *(const unsigned char *)b;
 }
 
 static
@@ -136,11 +136,11 @@ int init_directive_c(const char * const folder) {
 }
 
 int deinit_directive_c(void) {
-    for (int i = 0; i < entries.n; i++) {
+    for (size_t i = 0; i < entries.n; i++) {
         free(kv_A(entries, i).name);
     }
 
-    for (int i = 0; i < move_data.n; i++) {
+    for (size_t i = 0; i < move_data.n; i++) {
         move_data_t move = kv_A(move_data, i);
         free(move.orig_name);
         free(move.curt_name);
@@ -156,10 +156,10 @@ int deinit_directive_c(void) {
 }
 
 int make_directive_file(FILE * f) {
-    for (int i = 0; i < entries.n; i++) {
+    for (size_t i = 0; i < entries.n; i++) {
         entry_t * entry = &kv_A(entries, i);
         // ID
-        fprintf(f, "%03d",
+        fprintf(f, "%03ld",
             i
         );
         // Permissions
@@ -354,7 +354,7 @@ int execute_directive_file(FILE * f) {
     }
 
     // Deletion
-    for (int i = 0; i < entries.n; i++) {
+    for (size_t i = 0; i < entries.n; i++) {
         entry_t * entry = &kv_A(entries, i);
         if (!entry->is_mentioned) {
             CHECK(mydelete(entry->name));
@@ -362,7 +362,7 @@ int execute_directive_file(FILE * f) {
     }
 
     // Swap (move)
-    for (int i = 0; i < move_data.n; i++) {
+    for (size_t i = 0; i < move_data.n; i++) {
         move_data_t move = kv_A(move_data, i);
         // NOTE: we could be overwritting here;
         //        thats the behaviour the user would expect
@@ -386,7 +386,7 @@ int execute_directive_file(FILE * f) {
      * Therefor, files waiting to be swapped (possessing a temporary name) are restored back
      *  (if possible, if we run into another error, theres not much to do).
      */
-    for (int i = 0; i < move_data.n; i++) {
+    for (size_t i = 0; i < move_data.n; i++) {
         move_data_t move = kv_A(move_data, i);
         if (!access(move.orig_name, F_OK)) {
             mymove(move.curt_name, move.orig_name);

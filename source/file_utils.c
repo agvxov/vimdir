@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h>
 #include <pwd.h>
 #include <grp.h>
@@ -70,7 +71,7 @@ int init_file_utils(bool is_dry_run, const char * custom_rm_) {
     return 0;
 }
 
-int deinit_file_utis() {
+int deinit_file_utis(void) {
     mytouch  = NULL;
     mydelete = NULL;
     mychmod  = NULL;
