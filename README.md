@@ -1,5 +1,5 @@
 # Vimdir
-> VIDIR iMproved
+> VIDIR iMproved; edit directories and filenames
 
 ## SYNOPSIS
 **vidir** **[***options***]** **[**directory**]**
