@@ -428,6 +428,21 @@ class CMDTEST_mynesteddir < Cmdtest::Testcase
       removed_files ["mynesteddir/nest/", "mynesteddir/nest/.gitkeep"]
     end
   end
+
+  def test_mv_dir
+    File.write('target.txt',
+      [
+        "000\t./mynesteddir/",
+        "001\t./mynesteddir/.gitkeep",
+      ].join("\n")
+    )
+
+    cmd "EDITOR=./replacer.sh vimdir -r ./mynesteddir/" do
+      exit_zero
+      removed_files ["mynesteddir/nest/", "mynesteddir/nest/.gitkeep"]
+      created_files ["mynesteddir/.gitkeep"]
+    end
+  end
 end
 
 
