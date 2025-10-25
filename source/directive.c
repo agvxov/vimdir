@@ -243,6 +243,8 @@ int execute_directive_file(FILE * f) {
     entry_t touch_entry;
 
     while (fgets(line, LINE_SIZE, f) != NULL) {
+        if (line[0] == '\n') { continue; }
+
         sp = line;
 
         // ID
