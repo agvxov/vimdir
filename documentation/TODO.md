@@ -1,6 +1,7 @@
 # TODO
 - [ ] fix failing test
 - [ ] sigsegv when trying to create a new folder (new file number, trailing slash)
+- [ ] for vim in particular, the working dir should be the tree root
 
 ## Ideas
 Accept multiple folders and individual files.
