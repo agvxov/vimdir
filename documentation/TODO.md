@@ -1,4 +1,6 @@
 # TODO
+- [ ] fix failing test
+- [ ] sigsegv when trying to create a new folder (new file number, trailing slash)
 
 ## Ideas
 Accept multiple folders and individual files.
