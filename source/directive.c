@@ -350,27 +350,33 @@ int execute_directive_file(FILE * f) {
         }
 
         // Name (move)
-        if (!entry->is_mentioned) {
+        do {
+            if (entry->is_mentioned) {
+                break;
+            }
+
             CHECK_FORMAT(1, sscanf(sp, "%[^\n]", buffer));
             size_t len = strlen(buffer);
             if (buffer[len-1] == '/') {
                 buffer[len-1] = '\0';
             }
 
-            if (strcmp(entry->name, buffer)) {
-                if (access(buffer, F_OK)) {
-                    mymove(entry->name, buffer);
-                } else {
-                    move_data_t move = mytempmove(entry->name, buffer);
-                    if (!move.orig_name) {
-                        errorn(E_FILE_SWAP, entry->name, buffer);
-                        goto recovery;
-                    }
-
-                    kv_push(move_data_t, move_data, move);
-                }
+            if (!path_cmp(entry->name, buffer)) {
+                break;
             }
-        }
+
+            if (access(buffer, F_OK)) {
+                mymove(entry->name, buffer);
+            } else {
+                move_data_t move = mytempmove(entry->name, buffer);
+                if (!move.orig_name) {
+                    errorn(E_FILE_SWAP, entry->name, buffer);
+                    goto recovery;
+                }
+
+                kv_push(move_data_t, move_data, move);
+            }
+        } while (0);
         
         // -- Poke
         entry->is_mentioned = true;
