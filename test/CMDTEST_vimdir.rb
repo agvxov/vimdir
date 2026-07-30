@@ -6,6 +6,22 @@ require 'etc'
 #   therefor they will only succeed on debug builds.
 #  Cmdtest does not consider modifying metadata a file change.
 
+# XXX probably signal the thing type in the script name
+# Pseudo-editors:
+#   faulty_editor.sh : exit with error;
+#                       used to validate vimdir aborts when the editor
+#                       exits with an error
+#   saver.sh         : copy input to a file;
+#                       used to validate the entries vimdir outputed
+#   replacer.sh      : replace input with our own file;
+#                       used to validate the behaviour of vimdir
+#                       given an entry file
+#   memoryhole.sh    : discard input;
+#                       used to XXX
+# Pseudo-rm:
+#   trash.sh         : rename with .trash postfix;
+#                       used to test vimdir correctly invoking custom rm-ers
+
 #  ___          _
 # | _ ) __ _ __(_)__
 # | _ \/ _` (_-< / _|
