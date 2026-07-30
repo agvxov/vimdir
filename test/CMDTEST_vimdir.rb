@@ -202,6 +202,66 @@ class CMDTEST_mydir < Cmdtest::Testcase
     end
   end
 
+  def test_empty_line
+    File.write('target.txt',
+      [
+        "000\t./mydir/.gitkeep",
+        "001\t./mydir/file.txt",
+        "",
+        "002\t./mydir/script.sh",
+      ].join("\n")
+    )
+
+    cmd "EDITOR=./replacer.sh vimdir -n ./mydir/" do
+      exit_zero
+    end
+  end
+
+  def test_empty_line_whitespace
+    File.write('target.txt',
+      [
+        "000\t./mydir/.gitkeep",
+        "001\t./mydir/file.txt",
+        "  \t ",
+        "002\t./mydir/script.sh",
+      ].join("\n")
+    )
+
+    cmd "EDITOR=./replacer.sh vimdir -n ./mydir/" do
+      exit_zero
+    end
+  end
+
+  def test_comments_line
+    File.write('target.txt',
+      [
+        "000\t./mydir/.gitkeep",
+        "001\t./mydir/file.txt",
+        "# this is my comment line",
+        "002\t./mydir/script.sh",
+      ].join("\n")
+    )
+
+    cmd "EDITOR=./replacer.sh vimdir -n ./mydir/" do
+      exit_zero
+    end
+  end
+
+  def test_comments_line_whitespace
+    File.write('target.txt',
+      [
+        "000\t./mydir/.gitkeep",
+        "001\t./mydir/file.txt",
+        "\t   # this is my comment line",
+        "002\t./mydir/script.sh",
+      ].join("\n")
+    )
+
+    cmd "EDITOR=./replacer.sh vimdir -n ./mydir/" do
+      exit_zero
+    end
+  end
+
   def test_dry_del
     File.write('target.txt',
       [

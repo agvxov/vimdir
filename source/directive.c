@@ -208,6 +208,25 @@ char * next_field(const char * s) {
     return (char*)s;
 }
 
+static inline
+bool is_null_entry(const char * line) {
+    const char * sp = line;
+
+    // leading whitespace
+    while (*sp == ' '
+       ||  *sp == '\t') {
+        ++sp;
+    }
+
+    // comment or empty line
+    if (*sp == '#'
+    ||  *sp == '\n') {
+        return true;
+    }
+
+    return false;
+}
+
 int execute_directive_file(FILE * f) {
     #define NEXT_FIELD do { \
             if (*(sp = next_field(sp)) == '\0') { \
@@ -243,7 +262,9 @@ int execute_directive_file(FILE * f) {
     entry_t touch_entry;
 
     while (fgets(line, LINE_SIZE, f) != NULL) {
-        if (line[0] == '\n') { continue; }
+        if (is_null_entry(line)) {
+            continue;
+        }
 
         sp = line;
 
