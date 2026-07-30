@@ -20,6 +20,7 @@ ${OUT}: ${SOURCE}
 	${CC} ${CPPFLAGS} ${CFLAGS} -o ${OUT} ${SOURCE}
 
 test:
+	vimdir --help | grep 'DEBUG BUILD'
 	cmdtest --fast
 
 ls_colors:
@@ -36,4 +37,4 @@ clean:
 	-rm ${OUT}
 	-rm vimdir.tar
 
-.PHONY: test
+.PHONY: test ls_colors bundle install clean
