@@ -243,19 +243,19 @@ int execute_directive_file(FILE * f) {
             goto recovery; \
         } \
     } while (0)
-    /* io buffering
+    /* IO buffering
      */
     const int LINE_SIZE = 4096;
     char line[LINE_SIZE];
     char buffer[LINE_SIZE/2];
-    /* String Pointer, indexing `line`
+    /* String pointer indexing `line`
      */
     char * sp;
-    /* alias reference to the current entry being operated on
+    /* Alias reference to the current entry being operated on
      */
     entry_t * entry;
-    /* since new files fille be missing from `entries`,
-     *  but we only the the latest one,
+    /* since new files will be missing from `entries`,
+     *  but we only need the latest one,
      *  we buffer it on the stack
      */
     char touch_buffer[LINE_SIZE/2];
