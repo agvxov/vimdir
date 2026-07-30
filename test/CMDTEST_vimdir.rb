@@ -128,6 +128,20 @@ class CMDTEST_mydir < Cmdtest::Testcase
     end
   end
 
+  def test_isomorph_path_noop
+    File.write('target.txt',
+      [
+        "000\t./mydir/.gitkeep",
+        "002\t./mydir//script.sh",
+        "001\t./mydir////file.txt",
+      ].join("\n")
+    )
+
+    cmd "EDITOR=./replacer.sh vimdir -n ./mydir/" do
+      exit_zero
+    end
+  end
+
   def test_contents
     expected = [
         "000\t./mydir/.gitkeep",
