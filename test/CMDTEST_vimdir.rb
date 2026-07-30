@@ -107,6 +107,7 @@ class CMDTEST_mydir < Cmdtest::Testcase
     import_directory "test/mydir/", "./mydir/"
   end
 
+  # XXX
   def test_noop
     cmd "EDITOR=./memoryhole.sh vimdir -n ./mydir/" do
       exit_zero
