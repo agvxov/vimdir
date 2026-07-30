@@ -24,14 +24,14 @@ void usage(void) {
 }
 
 void get_env(void) {
-  no_color:
+    // NO_COLOR
     char * no_color = getenv("NO_COLOR");
     if (no_color
     &&  no_color[0] != '\0') {
         dictate_color_enabled(false);
     }
     
-  set_editor:
+    // Editor
     editor = getenv("VIMDIREDITOR");
     if (editor
     &&  editor[0] != '\0') {
@@ -46,6 +46,7 @@ void get_env(void) {
 
     editor = "vi";
 
+    // RM
   set_custom_rm:
     custom_rm = getenv("VIMDIRRM");
     if (custom_rm
@@ -53,7 +54,6 @@ void get_env(void) {
         custom_rm = NULL;
     }
 
-  end:
     return;
 }
 
