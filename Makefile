@@ -6,13 +6,13 @@ ifeq (${DEBUG}, 1)
   CFLAGS += -O0 -ggdb -Wall -Wpedantic
   CFLAGS += -fsanitize=address
   ifeq (${CC}, clang)
-    CFLAGS += -Weverything -Wno-switch-default -std=c23 -Wno-pre-c23-compat
+    CFLAGS += -Weverything -Wno-switch-default -Wno-pre-c23-compat
   endif
 else
   CFLAGS += -O3 -flto=auto -fomit-frame-pointer
 endif
 
-CFLAGS +=
+CFLAGS += -std=c23 -D_DEFAULT_SOURCE
 
 OUT := vimdir
 
