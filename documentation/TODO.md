@@ -5,6 +5,7 @@
 - [ ] allow for files with tab and newline by displaying them as already having record separator characters in their names
 - [ ] bump dictate, move it into library/
 - [ ] bump kvec, move it into library/
+- [ ] complain to the C committee that nodiscard cannot be applied to function pointers
 
 ## Ideas
 Accept multiple folders and individual files.
