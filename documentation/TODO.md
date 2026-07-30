@@ -6,6 +6,7 @@
 - [ ] bump dictate, move it into library/
 - [ ] bump kvec, move it into library/
 - [ ] complain to the C committee that nodiscard cannot be applied to function pointers
+- [ ] path_cmp should account for duplicate slashes and inline ./
 
 ## Ideas
 Accept multiple folders and individual files.
