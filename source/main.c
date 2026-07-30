@@ -59,7 +59,7 @@ int edit(const char * filename) {
 signed main(int argc, char * * argv) {
     #define CHECK(x) do { \
             if ((r = x)) { \
-                goto end; \
+                goto cleanup; \
             } \
         } while (0)
     int r = 0;
@@ -69,14 +69,14 @@ signed main(int argc, char * * argv) {
 
     folder = trim_trailing_slashes(folder);
 
-  create:
+    // Create
     FILE * tmpfile = NULL;
     char tmpfile_name[32];
 
     CHECK(get_tmpfile_name(tmpfile_name));
 
     tmpfile = fopen(tmpfile_name, "w+");
-    CHECK_OPEN(tmpfile, tmpfile_name, goto end);
+    CHECK_OPEN(tmpfile, tmpfile_name, goto cleanup);
 
     CHECK(init_directive_c(folder));
 
@@ -84,17 +84,18 @@ signed main(int argc, char * * argv) {
 
     fflush(tmpfile);
 
-  edit:
+    // Edit
     CHECK(edit(tmpfile_name));
 
-  process:
+    // Process
     fclose(tmpfile);
     tmpfile = fopen(tmpfile_name, "r");
-    CHECK_OPEN(tmpfile, tmpfile_name, goto end);
+    CHECK_OPEN(tmpfile, tmpfile_name, goto cleanup);
 
     CHECK(execute_directive_file(tmpfile));
 
-  end:
+    // Cleanup
+  cleanup:
     if (tmpfile) {
         fclose(tmpfile);
     }
