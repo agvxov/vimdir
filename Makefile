@@ -12,7 +12,7 @@ else
   CFLAGS += -O3 -flto=auto -fomit-frame-pointer
 endif
 
-CFLAGS += -Wno-unused-label
+CFLAGS +=
 
 OUT := vimdir
 
