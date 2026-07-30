@@ -50,14 +50,14 @@ The following is the format of an entry. The concrete syntax is command line fla
 ## OPERATIONS
 Changing a field will manupulate the file (e.g. renaming, chmod, chown).
 
-Swapping the names of files is allowed and should be handed correctly.
+Swapping the names of files is allowed and is going to be handed correctly.
 
 Deleting a line will delete the file.
 
 Duplicating a line and changing the name will copy the file.
 
 ## COLORS
-Vimdir uses the extension `.vimdir` for entry files,
+Vimdir uses the file extension `.vimdir` for entry files,
 this can be used to recognize them in your editor.
 
 A Vim syntax file should be packaged with Vimdir.
@@ -98,3 +98,5 @@ If you have aforementioned files, please seek the help of a specialist.
 
 The first character of the permission string is simply informative,
 its (changed) value is ignored.
+
+This manual page was generated from the project README.
