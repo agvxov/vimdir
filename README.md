@@ -2,7 +2,7 @@
 > VIDIR iMproved; edit directories and filenames
 
 ## SYNOPSIS
-**vidir** **[***options***]** **[**directory**]**
+**vimdir** **[***options***]** **[**directory**]**
 
 ## DESCRIPTION
 Vimdir allows editing of directories and filenames in a text editor.
@@ -11,24 +11,24 @@ If no directory is specified, the filenames of the current directory are edited.
 Vimdir is an extended reimplementation of *vidir(1)*.
 
 ## OPTIONS
-**-h**
+**-h** **--help**
 : Print help and exit.
 
-**-n**
+**-n** **--dry-run**
 : Dry run.
 Do not modify any files, only print what would have happened.
 
-**-p**
+**-p** **--permission**
 : Edit permissions.
 Permissions will be prepended in human readable form (similar to ls) to each entry.
 Modifying this field results in a (non-recursive) chmod.
 
-**-o**
+**-o** **--owner**
 : Edit owner.
 The owner and group will be prepended in human readable form to each entry.
 Modifying this field results in a (non-recursive) chown.
 
-**-r**
+**-r** **--recursive**
 : Run recursively.
 Each child folder's contents will be listed with their full path.
 Might slow things down as the whole document has to be constructed

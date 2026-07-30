@@ -12,11 +12,14 @@ static
 void usage(void) {
     dictate(
         "$B$gvimdir$0 $y[$boptions$y] <$bpath$y>$0\n"
-        "  $B$g-h$0 : print help\n"
-        "  $B$g-n$0 : dry run; do not modify files, just print operations\n"
-        "  $B$g-p$0 : allow for editing permissions\n"
-        "  $B$g-o$0 : allow for editing owner/group\n"
-        "  $B$g-r$0 : recursive"
+        "  $B$g-h --help$0       : print help\n"
+        "  $B$g-n --dry-run$0    : dry run; do not modify files, just print operations\n"
+        "  $B$g-p --permission$0 : allow for editing permissions\n"
+        "  $B$g-o --owner$0      : allow for editing owner/group\n"
+        "  $B$g-r --recursive$0  : recursive"
+    #if DEBUG == 1
+        "\n$B$rTHIS IS A DEBUG BUILD OF VIMDIR!$0"
+    #endif
     );
 }
 
@@ -59,7 +62,17 @@ void parse_args(int argc, char * * argv) {
 
     opterr = 0; // suppress default getopt error messages
 
-    while ((opt = getopt(argc, argv, "hvnpor")) != -1) {
+    const struct option long_options[] = {
+        {"help",       no_argument, 0, 'h'},
+        {"dry-run",    no_argument, 0, 'd'},
+        {"permission", no_argument, 0, 'p'},
+        {"owner",      no_argument, 0, 'o'},
+        {"recursive",  no_argument, 0, 'r'},
+        {"recurse",    no_argument, 0, 'r'}, // intentionally undocumented
+        {0, 0, 0, 0}
+    };
+
+    while ((opt = getopt_long(argc, argv, "hvnpor", long_options, NULL)) != -1) {
         switch (opt) {
             case 'h': {
                 usage();
