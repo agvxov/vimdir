@@ -210,7 +210,8 @@ int moist_touch(const char * filename) {
         CHECK_OPEN(f, filename, return 1);
         fclose(f);
     } else {
-        mkdir(filename, 0777);
+        int rc = mkdir(filename, 0777);
+        if (rc) { return rc; } // XXX
     }
     return 0;
 }
